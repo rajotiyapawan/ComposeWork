@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.rajotiya.mytestapp.aob_revamp.screens.AddLocalityProjectScreen
 import com.rajotiya.mytestapp.aob_revamp.screens.BuyFlowMoreProductsScreen
 import com.rajotiya.mytestapp.aob_revamp.screens.CitySelectionScreen
 import com.rajotiya.mytestapp.aob_revamp.screens.FilterScreen
@@ -90,7 +91,7 @@ fun MainViews(modifier: Modifier = Modifier) {
             }
         }
         composable(route = AOBScreens.AddLocalityProject.name) {
-            CitySelectionScreen(modifier = Modifier.fillMaxWidth()){
+            AddLocalityProjectScreen(modifier = Modifier.fillMaxWidth()){
 
             }
         }

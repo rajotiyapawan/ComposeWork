@@ -40,5 +40,10 @@ val Typography = Typography(
         fontFamily = FontFamily(Font(R.font.montserrat_semibold)),
         fontSize = 14.sp,
         lineHeight = 16.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
+        fontSize = 14.sp,
+        lineHeight = 16.sp
     )
 )
