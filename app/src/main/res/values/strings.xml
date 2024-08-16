@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyTestApp</string>
+    <string name="title_activity_app_on_boarding_compose">AppOnBoardingComposeActivity</string>
+</resources>
