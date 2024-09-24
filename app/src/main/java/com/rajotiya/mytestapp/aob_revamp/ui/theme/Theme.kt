@@ -22,13 +22,14 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+
 @Composable
 fun AOBTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = Typography,
+        typography = AoBTypography,
         content = content
     )
 }

@@ -17,9 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,11 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.rajotiya.mytestapp.aob_revamp.AOBViewModel
 import com.rajotiya.mytestapp.aob_revamp.AppOnBoardingComposeActivity
-import com.rajotiya.mytestapp.aob_revamp.CustomTextField
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.disableButtonColor
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
-import com.rajotiya.mytestapp.aob_revamp.ui.theme.textFieldColor
 import com.rajotiya.mytestapp.aob_revamp.utils.CustomMobileInputField
+import com.rajotiya.mytestapp.aob_revamp.utils.CustomTextField
 
 /**
  * Created by Pawan Rajotiya on 07-08-2024.

@@ -66,7 +66,7 @@ class AppOnBoardingComposeActivity : ComponentActivity() {
 @Composable
 fun MainViews(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val startDestination = AOBScreens.AddLocalityProject.name
+    val startDestination = AOBScreens.InitialSelection.name
     val context = LocalContext.current
 
     NavHost(
@@ -74,49 +74,40 @@ fun MainViews(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         composable(route = AOBScreens.InitialSelection.name) {
-            InitialSelectionScreen(modifier = Modifier.fillMaxWidth()){
-                when(it) {
-                    BuyProperty -> { navController.navigate(route = AOBScreens.CitySelection.name) }
-                    RentProperty -> { navController.navigate(route = AOBScreens.CitySelection.name) }
-                    SellProperty -> {  }
-                    PropWorth -> {  }
-                    HomeLoans -> {  }
-                    HomeInteriors -> {  }
-                }
-            }
+            InitialSelectionScreen(modifier = Modifier.fillMaxWidth())
         }
         composable(route = AOBScreens.CitySelection.name) {
-            CitySelectionScreen(modifier = Modifier.fillMaxWidth()){
+            CitySelectionScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.AddLocalityProject.name) {
-            AddLocalityProjectScreen(modifier = Modifier.fillMaxWidth()){
+            AddLocalityProjectScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.BuyMoreProducts.name) {
-            BuyFlowMoreProductsScreen(modifier = Modifier.fillMaxWidth()){
+            BuyFlowMoreProductsScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.VerifyOtpScreen.name) {
-            VerifyOtpScreen(modifier = Modifier.fillMaxWidth()){
+            VerifyOtpScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.UserDetailsScreen.name) {
-            UserDetailsScreen(modifier = Modifier.fillMaxWidth()){
+            UserDetailsScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.POIScreen.name) {
-            PLaceOfInterestScreen(modifier = Modifier.fillMaxWidth()){
+            PLaceOfInterestScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
         composable(route = AOBScreens.FilterScreen.name) {
-            FilterScreen(modifier = Modifier.fillMaxWidth()){
+            FilterScreen(modifier = Modifier.fillMaxWidth()) {
 
             }
         }
@@ -124,5 +115,5 @@ fun MainViews(modifier: Modifier = Modifier) {
 }
 
 enum class AOBScreens {
-    InitialSelection, CitySelection, BuyMoreProducts, VerifyOtpScreen, UserDetailsScreen, POIScreen, FilterScreen,AddLocalityProject
+    InitialSelection, CitySelection, BuyMoreProducts, VerifyOtpScreen, UserDetailsScreen, POIScreen, FilterScreen, AddLocalityProject
 }

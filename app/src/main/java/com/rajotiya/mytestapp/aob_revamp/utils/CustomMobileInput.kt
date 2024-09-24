@@ -38,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.rajotiya.mytestapp.R
-import com.rajotiya.mytestapp.aob_revamp.CustomTextField
-import com.rajotiya.mytestapp.aob_revamp.loadJSONFromAsset
 import com.rajotiya.mytestapp.aob_revamp.models.CountryListModel
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textFieldColor
