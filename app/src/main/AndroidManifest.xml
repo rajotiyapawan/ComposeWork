@@ -17,6 +17,11 @@
             android:name=".aob_revamp.AppOnBoardingComposeActivity"
             android:exported="true"
             android:theme="@style/Theme.MyTestApp">
+        </activity>
+        <activity
+            android:name=".agent.boosterlead.AgentDetailPageActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyTestApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
