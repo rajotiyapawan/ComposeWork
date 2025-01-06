@@ -1,11 +1,19 @@
 package com.rajotiya.mytestapp.utility
 
+import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
+import android.text.TextUtils
+import android.view.Gravity
+import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.core.content.res.ResourcesCompat
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.rajotiya.mytestapp.AppContext
 import com.rajotiya.mytestapp.R
 
@@ -45,14 +53,41 @@ fun getFont(font: String): Typeface {
     return typeFace!!
 }
 
-@OptIn(ExperimentalCoilApi::class)
+fun getFontFamily(font: String): FontFamily {
+    return FontFamily(getFont(font))
+}
+
 @Composable
 fun getComposeImageFromUrl(url: String?): ImagePainter {
-    return rememberImagePainter(
-        url ?: R.drawable.mbimageloader_no_image_new,
-        builder = {
-            placeholder(R.drawable.mbimageloader_no_image_new)
-            error(R.drawable.mbimageloader_no_image_new)
-        }
+    return rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(url ?: R.drawable.mbimageloader_no_image_new)
+            .apply(block = fun ImageRequest.Builder.() {
+                placeholder(R.drawable.mbimageloader_no_image_new)
+                error(R.drawable.mbimageloader_no_image_new)
+            }).build()
     )
+}
+
+fun mbToast(context: Context?, msg: String?) {
+    if (context != null && !TextUtils.isEmpty(msg)) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun showErrorMessageToast(context: Context, message: String?) {
+    try {
+        val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.FILL_HORIZONTAL or Gravity.BOTTOM, 0, 0)
+        val toastView = toast.view //This'll return the default View of the Toast.
+
+        /* And now you can get the TextView of the default View of the Toast. */
+        val toastMessage = toastView!!.findViewById<TextView>(android.R.id.message)
+        toastMessage.textSize = 16f
+        toastMessage.setTextColor(Color.WHITE)
+        toastMessage.compoundDrawablePadding = 16
+        toastView.setBackgroundColor(Color.RED)
+        toast.show()
+    } catch (npe: NullPointerException) {
+        npe.printStackTrace()
+    }
 }
