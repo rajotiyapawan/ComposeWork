@@ -61,23 +61,30 @@ fun LoyaltyRedeemRewardDetailsScreen(
             Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .background(color = mbRed, shape = RoundedCornerShape(50))
-                .padding(vertical = 11.dp),
-            contentAlignment = Alignment.Center
+                .background(color = Color(0xfffcfcfc), shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            LoyaltyPointsView(
-                textBeforeIcon = "Unlock for",
-                textAfterIcon = "10,000 points",
-                beforeStyle = TextStyle(
-                    fontSize = 18.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR), color = Color.White
-                ),
-                afterStyle = TextStyle(
-                    fontSize = 18.sp,
-                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                    color = Color.White
-                ),
-                iconSize = 18
-            )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .background(color = mbRed, shape = RoundedCornerShape(50))
+                    .padding(vertical = 11.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                LoyaltyPointsView(
+                    textBeforeIcon = "Unlock for",
+                    textAfterIcon = "10,000 points",
+                    beforeStyle = TextStyle(
+                        fontSize = 18.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR), color = Color.White
+                    ),
+                    afterStyle = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                        color = Color.White
+                    ),
+                    iconSize = 18
+                )
+            }
         }
     }
 }

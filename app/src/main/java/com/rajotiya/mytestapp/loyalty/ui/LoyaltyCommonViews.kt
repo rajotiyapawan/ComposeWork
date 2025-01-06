@@ -19,9 +19,9 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.sharp.AddCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,8 +63,7 @@ fun LoyaltyHeader(modifier: Modifier, points: String, onBack: () -> Unit) {
                 contentDescription = null,
                 tint = Color(0xff606060),
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-                    .size(24.dp)
+                    .size(16.dp)
                     .noRippleClick { onBack() }
             )
             LoyaltyPointsView(
@@ -97,7 +96,7 @@ fun LoyaltyPointsView(
     afterStyle: TextStyle,
     iconSize: Int
 ) {
-    Row(modifier = modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = textBeforeIcon, style = beforeStyle
         )
@@ -122,7 +121,9 @@ fun LoyaltyTermsConditionsView(modifier: Modifier, tnc: String) {
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClick { expandedState = !expandedState },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -131,17 +132,11 @@ fun LoyaltyTermsConditionsView(modifier: Modifier, tnc: String) {
                 color = Color(0xff303030),
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
-            IconButton(
-                onClick = {
-                    expandedState = !expandedState
-                }
-            ) {
-                Icon(
-                    imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = Color(0xff909090)
-                )
-            }
+            Icon(
+                imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = Color(0xff909090)
+            )
         }
         HorizontalDivider(
             modifier = Modifier
@@ -168,7 +163,9 @@ fun LoyaltyHowToUseView(modifier: Modifier) {
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClick { expandedState = !expandedState },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -178,17 +175,13 @@ fun LoyaltyHowToUseView(modifier: Modifier) {
                 color = Color(0xff303030),
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
-            IconButton(
-                onClick = {
-                    expandedState = !expandedState
-                },
-            ) {
-                Icon(
-                    imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = Color(0xff909090)
-                )
-            }
+
+            Icon(
+                imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = Color(0xff909090)
+            )
+
         }
         HorizontalDivider(
             modifier = Modifier
@@ -227,7 +220,9 @@ fun LoyaltyFAQView(modifier: Modifier) {
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClick { expandedState = !expandedState },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -237,17 +232,11 @@ fun LoyaltyFAQView(modifier: Modifier) {
                 color = Color(0xff303030),
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
-            IconButton(
-                onClick = {
-                    expandedState = !expandedState
-                },
-            ) {
-                Icon(
-                    imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = Color(0xff909090)
-                )
-            }
+            Icon(
+                imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = Color(0xff909090)
+            )
         }
         HorizontalDivider(
             modifier = Modifier
@@ -282,8 +271,9 @@ private fun FaqItem(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .noRippleClick { expandedState = !expandedState }
                 .padding(bottom = 3.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 "What is MB Elite Club?",
@@ -291,16 +281,10 @@ private fun FaqItem(modifier: Modifier = Modifier) {
                 fontSize = 14.sp,
                 color = textColorDark
             )
-            IconButton(
-                onClick = {
-                    expandedState = !expandedState
-                },
-            ) {
-                Icon(
-                    imageVector = if (expandedState) Icons.Default.AddCircle else Icons.Default.AddCircle,
-                    contentDescription = null
-                )
-            }
+            Icon(
+                imageVector = if (expandedState) Icons.Default.AddCircle else Icons.Sharp.AddCircle,
+                contentDescription = null, modifier=Modifier.size(20.dp)
+            )
         }
         if (expandedState) {
             Text(
