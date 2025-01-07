@@ -121,7 +121,9 @@ fun LandingPageUI(
 private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel: LoyaltyViewModel) {
     var isCollapseVedioPlayerVisible by remember { mutableStateOf(true) }
     Box {
-        LazyColumn(modifier = modifier.background(color = Color(0xfff5f5f5)).padding(bottom = 24.dp)) {
+        LazyColumn(modifier = modifier
+            .background(color = Color(0xfff5f5f5))
+            .padding(bottom = 24.dp)) {
             item {
                 LandingPageTopSection(modifier = Modifier.fillMaxWidth())
             }
@@ -149,7 +151,9 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
             }
             data.faq?.items?.let {
                 items(it) { item ->
-                    LoyaltyFaqItem(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 20.dp, bottom = 12.dp), item)
+                    LoyaltyFaqItem(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 20.dp, bottom = 12.dp), item)
 //                    LandingPageFaq(
 //                        modifier = Modifier
 //                            .fillMaxWidth()
@@ -238,7 +242,7 @@ private fun LandingPageRewardSection(modifier: Modifier = Modifier, reward: Rewa
                 ) {
                     data.items?.let {
                         items(it) { item ->
-                            ExclusiveRewardItemView(modifier = Modifier.height(220.dp),item= item, onClaim = onClaim)
+                            ExclusiveRewardItemView(modifier = Modifier.height(220.dp), item = item, onClaim = onClaim)
                         }
                     }
                 }
@@ -249,11 +253,16 @@ private fun LandingPageRewardSection(modifier: Modifier = Modifier, reward: Rewa
 
 @Composable
 private fun HeaderView(modifier: Modifier = Modifier) {
-    Row(modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Image(painter = painterResource(R.drawable.yellow_diamond_outlined), contentDescription = null)
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(start = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
             Text(
                 "MB Elite Club",
                 fontSize = 16.sp,
@@ -320,7 +329,7 @@ private fun TabsView(modifier: Modifier = Modifier) {
                     fontSize = 12.sp,
                     fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
                     color = Color(0xfff5f5f5),
-                    modifier= Modifier.noRippleClick { onSelection(index) }
+                    modifier = Modifier.noRippleClick { onSelection(index) }
                 )
             }
         }
