@@ -310,7 +310,7 @@ fun LoyaltyFAQView(modifier: Modifier, item: LoyaltySections) {
             ) {
                 item.qna?.let {
                     items(it) { faqItem: FaqItem ->
-                        FaqItem(modifier = Modifier.fillMaxWidth(), faqItem)
+                        LoyaltyFaqItem(modifier = Modifier.fillMaxWidth(), faqItem)
                     }
                 }
             }
@@ -319,11 +319,12 @@ fun LoyaltyFAQView(modifier: Modifier, item: LoyaltySections) {
 }
 
 @Composable
-private fun FaqItem(modifier: Modifier = Modifier, faqItem: FaqItem) {
+fun LoyaltyFaqItem(modifier: Modifier = Modifier, faqItem: FaqItem) {
     var expandedState by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(8.dp))
+            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 12.dp)
             .padding(top = 12.dp, bottom = 5.dp)
     ) {

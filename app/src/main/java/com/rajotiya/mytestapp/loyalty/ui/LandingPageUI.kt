@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
@@ -30,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,11 +53,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
+import com.rajotiya.mytestapp.aob_revamp.utils.noRippleClick
 import com.rajotiya.mytestapp.loyalty.LoyaltyLandingActivity
 import com.rajotiya.mytestapp.loyalty.LoyaltyScreens
 import com.rajotiya.mytestapp.loyalty.LoyaltyUserEvents
 import com.rajotiya.mytestapp.loyalty.LoyaltyViewModel
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyLandingPageData
+import com.rajotiya.mytestapp.loyalty.models.Rewards
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.LoaderUI
 import com.rajotiya.mytestapp.utility.MBCoreResultEvent
@@ -115,37 +121,44 @@ fun LandingPageUI(
 private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel: LoyaltyViewModel) {
     var isCollapseVedioPlayerVisible by remember { mutableStateOf(true) }
     Box {
-        LazyColumn(modifier = modifier.background(color = Color(0xfff5f5f5))) {
+        LazyColumn(modifier = modifier.background(color = Color(0xfff5f5f5)).padding(bottom = 24.dp)) {
             item {
                 LandingPageTopSection(modifier = Modifier.fillMaxWidth())
             }
             item {
                 LandingPageRewardSection(modifier = Modifier
                     .fillMaxWidth()
-                    .offset(y = (-20).dp), onClaim = {
+                    .offset(y = (-20).dp), data.rewards, onClaim = {
                     viewModel.getRewardDetails(it)
                 })
+            }
+            item {
+                Spacer(Modifier.height(73.dp))
+                Image(painter = painterResource(R.drawable.how_to_earn_rewards), contentDescription = null)
             }
             item {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 28.dp, start = 16.dp, end = 20.dp, bottom = 10.dp),
+                        .padding(top = 24.dp, start = 16.dp, end = 20.dp, bottom = 10.dp),
                     text = "FAQs",
                     color = Color.Black,
                     fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
                     fontSize = 18.sp
                 )
             }
-            items(5) {
-                LandingPageFaq(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 20.dp, bottom = 12.dp)
-                )
+            data.faq?.items?.let {
+                items(it) { item ->
+                    LoyaltyFaqItem(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 20.dp, bottom = 12.dp), item)
+//                    LandingPageFaq(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(start = 16.dp, end = 20.dp, bottom = 12.dp)
+//                    )
+                }
             }
         }
-        if (isCollapseVedioPlayerVisible) {
+        if (isCollapseVedioPlayerVisible && false) {
             LoyalityVideoPlayer(modifier = modifier, false) {
                 isCollapseVedioPlayerVisible = false
             }
@@ -189,46 +202,45 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier) {
             currentPoints = 1500,
             progressLineHeight = 12
         )
-        HowUI(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-        )
     }
 }
 
 @Composable
-private fun LandingPageRewardSection(modifier: Modifier = Modifier, onClaim: (id: String) -> Unit) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 12.dp, start = 12.dp, end = 12.dp)
+private fun LandingPageRewardSection(modifier: Modifier = Modifier, reward: Rewards?, onClaim: (id: String) -> Unit) {
+    reward?.let { data ->
+        Card(
+            modifier = modifier,
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            Text(
-                "Claim Exclusive Rewards",
-                fontSize = 18.sp,
-                color = textColorDark,
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            val state = rememberLazyGridState()
-            LazyVerticalGrid(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 1500.dp),
-                state = state,
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(top = 20.dp, bottom = 12.dp, start = 12.dp, end = 12.dp)
             ) {
-                items(13) {
-                    ExclusiveRewardItemView(modifier = Modifier, onClaim = onClaim)
+                Text(
+                    data.title ?: "",
+                    fontSize = 18.sp,
+                    color = textColorDark,
+                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                val state = rememberLazyGridState()
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 1500.dp),
+                    state = state,
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    data.items?.let {
+                        items(it) { item ->
+                            ExclusiveRewardItemView(modifier = Modifier.height(220.dp),item= item, onClaim = onClaim)
+                        }
+                    }
                 }
             }
         }
@@ -237,9 +249,11 @@ private fun LandingPageRewardSection(modifier: Modifier = Modifier, onClaim: (id
 
 @Composable
 private fun HeaderView(modifier: Modifier = Modifier) {
-    Row(modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp), verticalAlignment = Alignment.Top) {
+    Row(modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp), verticalAlignment = Alignment.CenterVertically) {
         Image(painter = painterResource(R.drawable.yellow_diamond_outlined), contentDescription = null)
-        Column(modifier = Modifier.padding(start = 8.dp)) {
+        Column(modifier = Modifier
+            .weight(1f)
+            .padding(start = 8.dp)) {
             Text(
                 "MB Elite Club",
                 fontSize = 16.sp,
@@ -248,18 +262,18 @@ private fun HeaderView(modifier: Modifier = Modifier) {
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
             Text(
-                "Rewards for your property journey!",
+                "Exclusive Offers, Rewards & more..",
                 fontSize = 11.sp,
                 color = Color.White,
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(16.dp))
         Row(
             Modifier
-                .padding(end = 17.dp, bottom = 10.dp)
-                .background(Color(0x2effffff), shape = RoundedCornerShape(100.dp))
-                .padding(horizontal = 4.dp, vertical = 2.dp),
+                .padding(bottom = 10.dp)
+                .background(Color(0x99000000), shape = RoundedCornerShape(100.dp))
+                .padding(6.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = R.drawable.loyalty_coin), contentDescription = null,
@@ -279,30 +293,38 @@ private fun HeaderView(modifier: Modifier = Modifier) {
 
 @Composable
 private fun TabsView(modifier: Modifier = Modifier) {
+    val tabs = listOf("What’s Elite Club?", "My Rewards", "How to Claim")
+    val (selected, onSelection) = remember { mutableIntStateOf(0) }
     Row(
         modifier = modifier
-            .background(color = Color(0x19f1bd65))
+            .background(color = Color(0xe668345f))
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            "What is Elite Club?",
-            fontSize = 12.sp,
-            lineHeight = 20.sp,
-            color = Color(0xfff5f5f5),
-            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
-            modifier = Modifier
-                .background(color = Color.Black, shape = RoundedCornerShape(100.dp))
-                .padding(horizontal = 8.dp)
-        )
-        Text(
-            "My Rewards",
-            fontSize = 12.sp,
-            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
-            color = Color(0xfff5f5f5)
-        )
-        Text("FAQ", fontSize = 12.sp, fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)), color = Color(0xfff5f5f5))
+        tabs.forEachIndexed { index, tabItem ->
+            if (index == selected) {
+                Text(
+                    tabItem,
+                    fontSize = 12.sp,
+                    lineHeight = 20.sp,
+                    color = Color(0xfff5f5f5),
+                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
+                    modifier = Modifier
+                        .background(color = Color(0xff41203a), shape = RoundedCornerShape(100.dp))
+                        .padding(horizontal = 8.dp)
+                )
+            } else {
+                Text(
+                    tabItem,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
+                    color = Color(0xfff5f5f5),
+                    modifier= Modifier.noRippleClick { onSelection(index) }
+                )
+            }
+        }
+
     }
 }
 

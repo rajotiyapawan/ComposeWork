@@ -1,10 +1,14 @@
 package com.rajotiya.mytestapp.loyalty.usecase
 
 import com.rajotiya.mytestapp.loyalty.models.FaqItem
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyFaq
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyLandingPageData
 import com.rajotiya.mytestapp.loyalty.models.LoyaltySections
+import com.rajotiya.mytestapp.loyalty.models.MileStone
 import com.rajotiya.mytestapp.loyalty.models.Placeholder
 import com.rajotiya.mytestapp.loyalty.models.RewardDetailData
+import com.rajotiya.mytestapp.loyalty.models.RewardItem
+import com.rajotiya.mytestapp.loyalty.models.Rewards
 import com.rajotiya.mytestapp.loyalty.models.TextModel
 import com.rajotiya.mytestapp.utility.MBCoreResultEvent
 import kotlinx.coroutines.delay
@@ -21,7 +25,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
 
             delay(500)
 
-            emit(MBCoreResultEvent.OnSuccess(LoyaltyLandingPageData(status = "1")))
+            emit(MBCoreResultEvent.OnSuccess(getDummyLandingData()))
         }
 
     override suspend fun getRewardsDetail(params: LoyaltyUseCase.RewardDetailParams): Flow<MBCoreResultEvent<RewardDetailData>> =
@@ -32,6 +36,121 @@ class LoyaltyRepoImpl : LoyaltyRepo {
 
             emit(MBCoreResultEvent.OnSuccess(getDummyResponse()))
         }
+
+    private fun getDummyLandingData(): LoyaltyLandingPageData {
+        return LoyaltyLandingPageData(
+            status = "1",
+            title = "MB Elite Club",
+            titleUrl = "",
+            subtitle = "Exclusive Offers, Rewards & more..",
+            pnts = "1500",
+            pnturl = "",
+            tabs = listOf("What’s Elite Club?", "My Rewards", "How to Claim"),
+            rwdurl = null, bgurl = null, vidId = null, vidurl = null,
+            rwdsProgress = listOf(
+                MileStone(imgUrl = null, pnts = "", pntsD = "1k", claimed = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "2k"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "10k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "12k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "15k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "30k", locked = "y"),
+            ),
+            rewards = Rewards(
+                title = "Exclusive Rewards", gfturl = null, items = listOf(
+                    RewardItem(imgUrl = "", title = "MB Prime Membership", worth = "200", points = "2000"),
+                    RewardItem(imgUrl = "", title = "Apple iPhone 16 Plus", worth = "200", points = "2000", locked = "y"),
+                    RewardItem(
+                        imgUrl = "",
+                        title = "₹1,000 off on movie tickets",
+                        worth = "1000",
+                        points = "2000",
+                        claimed = "y"
+                    ),
+                    RewardItem(imgUrl = "", title = "MB Prime Membership", worth = "200", points = "2000"),
+                    RewardItem(imgUrl = "", title = "MB Prime Membership", worth = "200", points = "2000"),
+                )
+            ), help = null, faq = LoyaltyFaq(
+                title = "FAQ's", items = listOf(
+                    FaqItem(
+                        que = TextModel(
+                            text = "How Can I earn more points?",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "14"
+                        ),
+                        ans = TextModel(
+                            text = "Do the tasks and you will gain points on completion of every task",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12"
+                        )
+                    ),
+                    FaqItem(
+                        que = TextModel(
+                            text = "How can I redeem rewards?",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "14"
+                        ),
+                        ans = TextModel(
+                            text = "Use reward points", color = "#303030", weight = "Regular", font = "Montserrat", size = "12"
+                        )
+                    ),
+                    FaqItem(
+                        que = TextModel(
+                            text = "Terms and conditions",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "14"
+                        ),
+                        ans = TextModel(
+                            text = "Do the tasks and you will gain points on complition of every task",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12"
+                        )
+                    ),
+                    FaqItem(
+                        que = TextModel(
+                            text = "How Can I earn more points?",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "14"
+                        ),
+                        ans = TextModel(
+                            text = "Do the tasks and you will gain points on complition of every task",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12"
+                        )
+                    ),
+                    FaqItem(
+                        que = TextModel(
+                            text = "How Can I earn more points?",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "14"
+                        ),
+                        ans = TextModel(
+                            text = "Do the tasks and you will gain points on complition of every task",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12"
+                        )
+                    ),
+                )
+            )
+        )
+    }
 
     private fun getDummyResponse(): RewardDetailData {
         return RewardDetailData(
@@ -60,13 +179,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             size = "12",
                             itemtype = "bullet",
                             placeholder = listOf(
-                                Placeholder(
-                                    text = "500",
-                                    color = "#303030",
-                                    weight = "Regular",
-                                    font = "Montserrat",
-                                    size = "12"
-                                )
+                                Placeholder(text = "500", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
                             )
                         ),
                         TextModel(

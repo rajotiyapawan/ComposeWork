@@ -10,14 +10,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -28,14 +31,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
+import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.utils.noRippleClick
+import com.rajotiya.mytestapp.loyalty.models.RewardItem
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.TextWithIcon
 import com.rajotiya.mytestapp.utility.getFont
 import com.rajotiya.mytestapp.utility.getFontFamily
 
 @Composable
-fun ExclusiveRewardItemView(modifier: Modifier = Modifier, onClaim: (id:String)->Unit) {
+fun ExclusiveRewardItemView(modifier: Modifier = Modifier, onClaim: (id: String) -> Unit, item: RewardItem) {
     Column(
         modifier = modifier
             .background(color = Color.White, shape = RoundedCornerShape(12.dp))
@@ -43,35 +48,43 @@ fun ExclusiveRewardItemView(modifier: Modifier = Modifier, onClaim: (id:String)-
     ) {
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .height(94.dp)
-                .clip(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
-            contentAlignment = Alignment.TopEnd
+                .clip(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                .background(color = Color.Gray),
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.mbimageloader_no_image_new),
                 contentDescription = null,
                 alignment = Alignment.TopEnd
             )
-            WorthView(price = "500")
         }
-        Text(
-            "Contact 5 owners for free",
-            fontSize = 14.sp,
-            color = Color(0xff303030),
-            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-            modifier = Modifier.padding(start = 8.dp, top = 9.dp, end = 8.dp, bottom = 6.dp)
-        )
-        TextWithIcon(
-            text = "Get for <icon> 1000 points",
-            iconText = "<icon>",
-            icon = { Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null) },
-            textStyle = TextStyle(
-                fontSize = 10.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
-            ),
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        BottomRedButton(enable = true, ctaText = "Unlock", onClick = { onClaim("") })
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+        ) {
+            WorthView(price = item.worth)
+            Text(
+                item.title ?: "",
+                fontSize = 14.sp,
+                color = Color(0xff303030),
+                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                modifier = Modifier.padding(top = 9.dp, bottom = 6.dp)
+            )
+            TextWithIcon(
+                text = "Get for <icon> ${item.points} points",
+                iconText = "<icon>",
+                icon = { Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null) },
+                textStyle = TextStyle(
+                    fontSize = 10.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            val claimed = item.claimed?.equals("y") == true
+            BottomRedButton(claimed = claimed, onClick = { onClaim("") })
+        }
 
     }
 }
@@ -79,30 +92,39 @@ fun ExclusiveRewardItemView(modifier: Modifier = Modifier, onClaim: (id:String)-
 @Composable
 private fun BottomRedButton(
     modifier: Modifier = Modifier,
-    enable: Boolean,
-    ctaText: String,
+    claimed: Boolean,
     onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .noRippleClick { if (enable) onClick() }
-            .padding(8.dp)
+            .noRippleClick { if (!claimed) onClick() }
             .background(
                 shape = RoundedCornerShape(50),
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xffd40000), Color(0xff892334))
-                )
+                color = if (claimed) Color(0xffebebeb) else mbRed
             )
             .padding(vertical = 7.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = ctaText,
-            color = Color.White,
-            fontSize = 14.sp,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
-        )
+        if (claimed) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Check, tint = Color(0xff009681), contentDescription = null, modifier = Modifier.size(14.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Claimed",
+                    color = Color(0xff009681),
+                    fontSize = 14.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                )
+            }
+        } else {
+            Text(
+                text = "Get Now",
+                color = Color.White,
+                fontSize = 14.sp,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+            )
+        }
 
     }
 }
@@ -138,12 +160,12 @@ private fun GetForView() {
 }
 
 @Composable
-private fun WorthView(price: String) {
+private fun WorthView(price: String?) {
     Row(
         modifier = Modifier
             .padding(end = 10.dp)
             .background(
-                color = Color(0xffffc72c),
+                color = Color(0xffffebb3),
                 shape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp)
             )
             .padding(vertical = 2.dp, horizontal = 4.dp)
