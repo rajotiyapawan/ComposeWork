@@ -13,7 +13,8 @@ data class TextModel(
     val font: String,
     val weight: String,
     val size: String,
-    val placeholder: List<Placeholder>
+    val itemtype: String?=null,
+    val placeholder: List<Placeholder>?=null
 )
 
 @Keep

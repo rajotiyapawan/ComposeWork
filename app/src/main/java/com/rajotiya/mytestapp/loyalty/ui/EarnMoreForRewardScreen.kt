@@ -100,27 +100,27 @@ private fun DetailsUI(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         )
-        AboutLoyaltyReward(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 18.dp)
-        )
-        LoyaltyHowToUseView(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        )
-        LoyaltyFAQView(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        )
-        LoyaltyTermsConditionsView(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            tnc = "These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. "
-        )
+//        AboutLoyaltyReward(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 18.dp)
+//        )
+//        LoyaltyHowToUseView(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 12.dp)
+//        )
+//        LoyaltyFAQView(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 12.dp)
+//        )
+//        LoyaltyTermsConditionsView(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 12.dp),
+//            tnc = "These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. These are the terms and Conditions. "
+//        )
         Spacer(modifier = Modifier.height(12.dp))
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -44,9 +45,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
-import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.utils.noRippleClick
+import com.rajotiya.mytestapp.loyalty.models.FaqItem
+import com.rajotiya.mytestapp.loyalty.models.LoyaltySections
+import com.rajotiya.mytestapp.loyalty.models.TextModel
 import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.TextWithPlaceholders
+import com.rajotiya.mytestapp.utility.getComposeColor
+import com.rajotiya.mytestapp.utility.getComposeFont
 import com.rajotiya.mytestapp.utility.getFont
 import com.rajotiya.mytestapp.utility.getFontFamily
 
@@ -55,7 +61,7 @@ import com.rajotiya.mytestapp.utility.getFontFamily
  */
 
 @Composable
-fun LoyaltyHeader(modifier: Modifier, points: String, onBack: () -> Unit) {
+fun LoyaltyHeader(modifier: Modifier, points: String?, onBack: () -> Unit) {
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
@@ -76,7 +82,7 @@ fun LoyaltyHeader(modifier: Modifier, points: String, onBack: () -> Unit) {
             LoyaltyPointsView(
                 modifier = Modifier,
                 textBeforeIcon = "Your Points",
-                textAfterIcon = points,
+                textAfterIcon = points ?: "",
                 iconSize = 12,
                 beforeStyle = TextStyle(
                     fontSize = 10.sp,
@@ -120,7 +126,7 @@ fun LoyaltyPointsView(
 }
 
 @Composable
-fun LoyaltyTermsConditionsView(modifier: Modifier, tnc: String) {
+fun LoyaltyTermsConditionsView(modifier: Modifier, item: LoyaltySections) {
     var expandedState by remember { mutableStateOf(false) }
 
     Column(
@@ -135,9 +141,10 @@ fun LoyaltyTermsConditionsView(modifier: Modifier, tnc: String) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Terms and conditions", fontSize = 16.sp,
-                color = Color(0xff303030),
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
+                item.text ?: "",
+                fontSize = (item.size?.toFloat() ?: 18f).sp,
+                fontFamily = getComposeFont(item.font ?: "", item.weight ?: ""),
+                color = getComposeColor(item.color ?: "#303030")
             )
             Icon(
                 imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -152,18 +159,48 @@ fun LoyaltyTermsConditionsView(modifier: Modifier, tnc: String) {
         )
         if (expandedState) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = tnc,
-                fontSize = 14.sp,
-                color = Color(0xff606060),
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR))
-            )
+            item.items?.let {
+                if (it.isNotEmpty()) {
+                    TextWithPlaceholders(it[0])
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun AboutLoyaltyReward(modifier: Modifier, item: LoyaltySections) {
+    Column(
+        modifier = modifier
+            .background(color = Color(0xfffff5cc), shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 12.dp, vertical = 12.dp)
+    ) {
+        Text(
+            item.text ?: "",
+            fontSize = (item.size?.toFloat() ?: 18f).sp,
+            fontFamily = getComposeFont(item.font ?: "", item.weight ?: ""),
+            color = getComposeColor(item.color ?: "#303030")
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        item.items?.let {
+            it.forEach { text: TextModel ->
+                if ("bullet" == (text.itemtype ?: "")) {
+                    Row(verticalAlignment = Alignment.Top) {
+                        Text("\u2022", color = getComposeColor(text.color))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextWithPlaceholders(text)
+                    }
+                } else {
+                    TextWithPlaceholders(text)
+                }
+            }
         }
     }
 }
 
 @Composable
-fun LoyaltyHowToUseView(modifier: Modifier) {
+fun LoyaltyHowToUseView(modifier: Modifier, item: LoyaltySections) {
     var expandedState by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -177,10 +214,10 @@ fun LoyaltyHowToUseView(modifier: Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "How to use",
-                fontSize = 16.sp,
-                color = Color(0xff303030),
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
+                item.text ?: "",
+                fontSize = (item.size?.toFloat() ?: 16f).sp,
+                fontFamily = getComposeFont(item.font ?: "", item.weight ?: ""),
+                color = getComposeColor(item.color ?: "#303030")
             )
 
             Icon(
@@ -201,26 +238,39 @@ fun LoyaltyHowToUseView(modifier: Modifier) {
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             ) {
-                Text(
-                    "After you redeem this reward: \n",
-                    fontSize = 12.sp,
-                    color = Color(0xff000000),
-                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR))
-
-                )
-                BulletedTextView("Earn more points")
-                BulletedTextView("Earn more points")
-                BulletedTextView("Earn more points")
-                BulletedTextView("Go to the payment options and select the Gift Voucher payment method.")
-                BulletedTextView("Earn more points")
-
+                item.subtext?.let {
+                    it.forEach { text: TextModel ->
+                        if ("bullet" == (text.itemtype ?: "")) {
+                            Row(verticalAlignment = Alignment.Top) {
+                                Text("\u2022", color = getComposeColor(text.color))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                TextWithPlaceholders(text)
+                            }
+                        } else {
+                            TextWithPlaceholders(text)
+                        }
+                    }
+                }
+                item.items?.let {
+                    it.forEach { text: TextModel ->
+                        if ("bullet" == (text.itemtype ?: "")) {
+                            Row(verticalAlignment = Alignment.Top) {
+                                Text("\u2022", color = getComposeColor(text.color))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                TextWithPlaceholders(text)
+                            }
+                        } else {
+                            TextWithPlaceholders(text)
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun LoyaltyFAQView(modifier: Modifier) {
+fun LoyaltyFAQView(modifier: Modifier, item: LoyaltySections) {
     var expandedState by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -234,10 +284,10 @@ fun LoyaltyFAQView(modifier: Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Frequently asked questions",
-                fontSize = 16.sp,
-                color = Color(0xff303030),
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
+                item.text ?: "",
+                fontSize = (item.size?.toFloat() ?: 16f).sp,
+                fontFamily = getComposeFont(item.font ?: "", item.weight ?: ""),
+                color = getComposeColor(item.color ?: "#303030")
             )
             Icon(
                 imageVector = if (expandedState) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -258,8 +308,10 @@ fun LoyaltyFAQView(modifier: Modifier) {
                     .heightIn(max = 1500.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(5) {
-                    FaqItem(modifier = Modifier.fillMaxWidth())
+                item.qna?.let {
+                    items(it) { faqItem: FaqItem ->
+                        FaqItem(modifier = Modifier.fillMaxWidth(), faqItem)
+                    }
                 }
             }
         }
@@ -267,7 +319,7 @@ fun LoyaltyFAQView(modifier: Modifier) {
 }
 
 @Composable
-private fun FaqItem(modifier: Modifier = Modifier) {
+private fun FaqItem(modifier: Modifier = Modifier, faqItem: FaqItem) {
     var expandedState by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -282,46 +334,15 @@ private fun FaqItem(modifier: Modifier = Modifier) {
                 .padding(bottom = 3.dp),
             horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                "What is MB Elite Club?",
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                fontSize = 14.sp,
-                color = textColorDark
-            )
+            faqItem.que?.let { TextWithPlaceholders(it) }
             Icon(
                 imageVector = if (expandedState) Icons.Default.AddCircle else Icons.Sharp.AddCircle,
                 contentDescription = null, modifier = Modifier.size(20.dp)
             )
         }
         if (expandedState) {
-            Text(
-                "Earn points by exploring the Magicbricks App or utilizing our newly launched Site Visit, Home Loan & Home Interior Services.",
-                fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
-                fontSize = 14.sp,
-                color = textColorDark
-            )
+            faqItem.ans?.let { TextWithPlaceholders(it) }
         }
-    }
-}
-
-@Composable
-fun AboutLoyaltyReward(modifier: Modifier) {
-    Column(
-        modifier = modifier
-            .background(color = Color(0xfffff5cc), shape = RoundedCornerShape(12.dp))
-            .padding(horizontal = 12.dp, vertical = 12.dp)
-    ) {
-        Text(
-            "About this Reward",
-            fontSize = 18.sp,
-            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
-            color = Color(0xff303030)
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        BulletedTextView("Get a BookMyShow Gift Voucher worth ₹500.")
-        BulletedTextView("Get a BookMyShow Gift Voucher worth ₹500.")
-        BulletedTextView("This reward cannot be sold, canceled, returned, refunded, or exchanged once claimed.")
-
     }
 }
 
@@ -347,7 +368,7 @@ private fun BulletedTextView(text: String) {
 
 
 @Composable
-fun LoyaltyRewardBrief(modifier: Modifier = Modifier) {
+fun LoyaltyRewardBrief(modifier: Modifier = Modifier, title: String?, titleUrl: String?, worth: String?, points: String?) {
     Row(
         modifier = modifier
             .padding(end = 20.dp),
@@ -364,22 +385,21 @@ fun LoyaltyRewardBrief(modifier: Modifier = Modifier) {
         )
         Column(
             modifier = Modifier
-                .height(75.dp)
                 .padding(start = 8.dp, top = 2.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Book My Show Movie Voucher",
+                text = title ?: "",
                 color = Color(0xff000000),
                 fontSize = 16.sp, lineHeight = 18.sp,
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
-            WorthView(price = "500")
-            Spacer(modifier = Modifier.weight(1f))
+            WorthView(price = worth)
+            Spacer(modifier = Modifier.height(12.dp))
             LoyaltyPointsView(
                 modifier = Modifier,
                 textBeforeIcon = "Used",
-                textAfterIcon = "points",
+                textAfterIcon = "$points points",
                 iconSize = 14,
                 beforeStyle = TextStyle(
                     fontSize = 12.sp,
@@ -429,7 +449,7 @@ fun AlreadyClaimedView() {
 }
 
 @Composable
-private fun WorthView(price: String) {
+private fun WorthView(price: String?) {
     Box(
         Modifier
             .background(color = Color(0xfffff7e1), shape = RoundedCornerShape(4.dp))

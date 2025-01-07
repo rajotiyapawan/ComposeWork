@@ -65,7 +65,7 @@ class LoyaltyLandingActivity : ComponentActivity() {
     @Composable
     fun MainViews(modifier: Modifier = Modifier) {
         val navController = rememberNavController()
-        val startDestination = LoyaltyScreens.RedeemReward.name
+        val startDestination = LoyaltyScreens.LandingPage.name
         HandleUserEvents(navController = navController)
         HandleGaEvents()
         PrepareNavGraph(modifier = modifier, navController = navController, startDestination = startDestination)

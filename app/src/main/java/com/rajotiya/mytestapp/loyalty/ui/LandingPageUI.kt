@@ -87,13 +87,14 @@ fun LandingPageUI(
     uiData?.let { LoadData(modifier = modifier, it, viewModel) }
 
     val rewardDetailResponse by viewModel.rewardDetails.collectAsState()
-    when (val response = rewardDetailResponse.getContentIfNotHandled()){
+    when (rewardDetailResponse.getContentIfNotHandled()){
         is MBCoreResultEvent.OnFailure -> { showErrorMessageToast(LocalContext.current, "Some error occurred!") }
         MBCoreResultEvent.OnLoading -> {
             LoaderUI(modifier)
         }
         is MBCoreResultEvent.OnSuccess -> {
             viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.RedeemReward.name))
+            LoaderUI(modifier)
         }
         null -> {}
     }

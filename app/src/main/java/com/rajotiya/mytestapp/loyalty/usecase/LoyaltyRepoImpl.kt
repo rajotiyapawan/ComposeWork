@@ -1,7 +1,11 @@
 package com.rajotiya.mytestapp.loyalty.usecase
 
+import com.rajotiya.mytestapp.loyalty.models.FaqItem
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyLandingPageData
+import com.rajotiya.mytestapp.loyalty.models.LoyaltySections
+import com.rajotiya.mytestapp.loyalty.models.Placeholder
 import com.rajotiya.mytestapp.loyalty.models.RewardDetailData
+import com.rajotiya.mytestapp.loyalty.models.TextModel
 import com.rajotiya.mytestapp.utility.MBCoreResultEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +30,241 @@ class LoyaltyRepoImpl : LoyaltyRepo {
 
             delay(500)
 
-            emit(MBCoreResultEvent.OnSuccess(RewardDetailData(status = "1")))
+            emit(MBCoreResultEvent.OnSuccess(getDummyResponse()))
         }
+
+    private fun getDummyResponse(): RewardDetailData {
+        return RewardDetailData(
+            status = "1",
+            title = "Annual Subscription of Times Prime",
+            titleUrl = "",
+            earnedPoints = "23433",
+            worth = "1299",
+            points = "10000",
+            pnturl = "",
+            items = listOf(
+                LoyaltySections(
+                    text = "About this Reward",
+                    type = "aboutrwds",
+                    color = "#303030",
+                    weight = "SemiBold",
+                    font = "Montserrat",
+                    size = "18",
+                    bgcolor = "#fff5cc",
+                    items = listOf(
+                        TextModel(
+                            text = "Get a BookMyshow Gift Voucher worth 500",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet",
+                            placeholder = listOf(
+                                Placeholder(
+                                    text = "500",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12"
+                                )
+                            )
+                        ),
+                        TextModel(
+                            text = "Reward can be claimed only once per user.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "This reward cannot be sold, canceled, returned, refunded, or exchanged once claimed.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        )
+                    )
+                ),
+                LoyaltySections(
+                    text = "How to use",
+                    type = "howtouserwds",
+                    color = "#303030",
+                    weight = "SemiBold",
+                    font = "Montserrat",
+                    size = "18",
+                    bgcolor = "#f5f5f5",
+                    subtext = listOf(
+                        TextModel(
+                            text = "After you redeem this reward:",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12"
+                        )
+                    ),
+                    items = listOf(
+                        TextModel(
+                            text = "We''ll email your Gift Voucher to you.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "Log in to your BookMyShow account.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "Choose the tickets you want to buy.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "Go to the payment options and select the Gift Voucher payment method.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "Enter the 16-digit gift card number in the Pay using gift voucher field.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        ),
+                        TextModel(
+                            text = "Click Apply to buy tickets.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                            itemtype = "bullet"
+                        )
+                    )
+                ),
+                LoyaltySections(
+                    text = "Frequently asked questions",
+                    type = "qnarewrds",
+                    color = "#303030",
+                    weight = "SemiBold",
+                    font = "Montserrat",
+                    size = "18",
+                    bgcolor = "#fff5cc",
+                    qna = listOf(
+                        FaqItem(
+                            que = TextModel(
+                                text = "How Can I earn more points?",
+                                color = "#303030",
+                                weight = "SemiBold",
+                                font = "Montserrat",
+                                size = "14"
+                            ),
+                            ans = TextModel(
+                                text = "Do the tasks and you will gain points on completion of every task",
+                                color = "#303030",
+                                weight = "Regular",
+                                font = "Montserrat",
+                                size = "12"
+                            )
+                        ),
+                        FaqItem(
+                            que = TextModel(
+                                text = "How can I redeem rewards?",
+                                color = "#303030",
+                                weight = "SemiBold",
+                                font = "Montserrat",
+                                size = "14"
+                            ),
+                            ans = TextModel(
+                                text = "Use reward points",
+                                color = "#303030",
+                                weight = "Regular",
+                                font = "Montserrat",
+                                size = "12"
+                            )
+                        ),
+                        FaqItem(
+                            que = TextModel(
+                                text = "Terms and conditions",
+                                color = "#303030",
+                                weight = "SemiBold",
+                                font = "Montserrat",
+                                size = "14"
+                            ),
+                            ans = TextModel(
+                                text = "Do the tasks and you will gain points on complition of every task",
+                                color = "#303030",
+                                weight = "Regular",
+                                font = "Montserrat",
+                                size = "12"
+                            )
+                        ),
+                        FaqItem(
+                            que = TextModel(
+                                text = "How Can I earn more points?",
+                                color = "#303030",
+                                weight = "SemiBold",
+                                font = "Montserrat",
+                                size = "14"
+                            ),
+                            ans = TextModel(
+                                text = "Do the tasks and you will gain points on complition of every task",
+                                color = "#303030",
+                                weight = "Regular",
+                                font = "Montserrat",
+                                size = "12"
+                            )
+                        ),
+                        FaqItem(
+                            que = TextModel(
+                                text = "How Can I earn more points?",
+                                color = "#303030",
+                                weight = "SemiBold",
+                                font = "Montserrat",
+                                size = "14"
+                            ),
+                            ans = TextModel(
+                                text = "Do the tasks and you will gain points on complition of every task",
+                                color = "#303030",
+                                weight = "Regular",
+                                font = "Montserrat",
+                                size = "12"
+                            )
+                        ),
+                    )
+                ),
+                LoyaltySections(
+                    text = "Terms and conditions",
+                    type = "tncrewrds",
+                    color = "#303030",
+                    weight = "SemiBold",
+                    font = "Montserrat",
+                    size = "18",
+                    bgcolor = "#fff5cc",
+                    items = listOf(
+                        TextModel(
+                            text = "Horem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in elementum tellus.",
+                            color = "#303030",
+                            weight = "Regular",
+                            font = "Montserrat",
+                            size = "12",
+                        )
+                    )
+                ),
+            )
+        )
+    }
 }

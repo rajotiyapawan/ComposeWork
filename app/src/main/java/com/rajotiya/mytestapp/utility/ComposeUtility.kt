@@ -11,7 +11,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.loyalty.models.TextModel
@@ -65,7 +65,7 @@ fun TextWithPlaceholders(textModel: TextModel) {
         var currentIndex = 0
 
         // Iterate over placeholders and format them in the main text
-        textModel.placeholder.forEach { placeholder ->
+        textModel.placeholder?.forEach { placeholder ->
             val placeholderIndex = mainText.indexOf(placeholder.text, startIndex = currentIndex)
             if (placeholderIndex != -1) {
                 // Add non-placeholder text
@@ -76,8 +76,7 @@ fun TextWithPlaceholders(textModel: TextModel) {
                     style = SpanStyle(
                         color = ComposeColor(Color.parseColor(placeholder.color)),
                         fontSize = placeholder.size.toFloat().sp,
-                        fontWeight = FontWeight(500),
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                        fontFamily = getComposeFont(font = placeholder.font, weight = placeholder.weight)
                     )
                 ) {
                     append(placeholder.text)
@@ -98,8 +97,28 @@ fun TextWithPlaceholders(textModel: TextModel) {
         text = annotatedString,
         color = ComposeColor(Color.parseColor(textModel.color)),
         fontSize = textModel.size.toFloat().sp,
-        fontWeight = FontWeight(textModel.weight.toIntOrNull() ?: FontWeight.Normal.weight),
-        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+        fontFamily = getComposeFont(font = textModel.font, weight = textModel.weight)
     )
+}
+
+fun getComposeColor(color:String) : ComposeColor {
+    return ComposeColor(Color.parseColor(color))
+}
+
+fun getComposeFont(font:String, weight:String): FontFamily{
+    return when (font) {
+        "Montserrat" -> getComposeMontserratFont(weight)
+        else -> getComposeMontserratFont(weight)
+    }
+}
+
+fun getComposeMontserratFont(weight: String): FontFamily {
+    return when (weight) {
+        "SemiBold" -> getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+        "Bold" -> getFontFamily(Constants.MONTSERRAT_BOLD)
+        "Medium" -> getFontFamily(Constants.MONTSERRAT_MEDIUM)
+        "Regular" -> getFontFamily(Constants.MONTSERRAT_REGULAR)
+        else -> getFontFamily(Constants.MONTSERRAT_REGULAR)
+    }
 }
 
