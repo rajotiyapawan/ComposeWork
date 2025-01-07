@@ -347,27 +347,6 @@ private fun FaqItem(modifier: Modifier = Modifier, faqItem: FaqItem) {
 }
 
 @Composable
-private fun BulletedTextView(text: String) {
-    Row {
-        Text(
-            " • ",
-            fontSize = 12.sp,
-            color = Color(0xff000000),
-            lineHeight = 18.sp,
-            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR))
-        )
-        Text(
-            text,
-            fontSize = 12.sp,
-            color = Color(0xff000000),
-            lineHeight = 18.sp,
-            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR))
-        )
-    }
-}
-
-
-@Composable
 fun LoyaltyRewardBrief(modifier: Modifier = Modifier, title: String?, titleUrl: String?, worth: String?, points: String?) {
     Row(
         modifier = modifier
