@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -61,12 +62,22 @@ fun LoyaltyRedeemRewardDetailsScreen(
             Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .background(color = Color(0xfffcfcfc), shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             Box(
-                Modifier
+                modifier = Modifier.align(Alignment.TopCenter)
                     .fillMaxWidth()
+                    .height(28.dp) // Thin layer for shadow
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent,Color(0x22000000)) // Shadow gradient
+                        ), shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                    )
+            )
+            Box(
+                Modifier
+                    .fillMaxWidth().padding(top = 8.dp)
+                    .background(color = Color(0xfffcfcfc), shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
                     .background(color = mbRed, shape = RoundedCornerShape(50))
                     .padding(vertical = 11.dp),
                 contentAlignment = Alignment.Center
