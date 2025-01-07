@@ -96,7 +96,8 @@ private fun MainView(modifier: Modifier) {
             .padding(start = 20.dp, end = 20.dp, top = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(31.dp))
+        LoyaltyRewardBrief(modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(12.dp))
         AboutLoyaltyReward(modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(12.dp))
         LoyaltyHowToUseView(modifier = Modifier.fillMaxWidth())

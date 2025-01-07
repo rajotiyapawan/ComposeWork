@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.sharp.AddCircle
@@ -30,10 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
@@ -283,7 +290,7 @@ private fun FaqItem(modifier: Modifier = Modifier) {
             )
             Icon(
                 imageVector = if (expandedState) Icons.Default.AddCircle else Icons.Sharp.AddCircle,
-                contentDescription = null, modifier=Modifier.size(20.dp)
+                contentDescription = null, modifier = Modifier.size(20.dp)
             )
         }
         if (expandedState) {
@@ -320,7 +327,6 @@ fun AboutLoyaltyReward(modifier: Modifier) {
 
 @Composable
 private fun BulletedTextView(text: String) {
-
     Row {
         Text(
             " • ",
@@ -336,5 +342,104 @@ private fun BulletedTextView(text: String) {
             lineHeight = 18.sp,
             fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR))
         )
+    }
+}
+
+
+@Composable
+fun LoyaltyRewardBrief(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .padding(end = 20.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_prime_bitmap_chat),
+            contentDescription = null,
+            modifier = Modifier
+                .width(79.dp)
+                .height(75.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.Gray)
+        )
+        Column(
+            modifier = Modifier
+                .height(75.dp)
+                .padding(start = 8.dp, top = 2.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                text = "Book My Show Movie Voucher",
+                color = Color(0xff000000),
+                fontSize = 16.sp, lineHeight = 18.sp,
+                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
+            )
+            WorthView(price = "500")
+            Spacer(modifier = Modifier.weight(1f))
+            LoyaltyPointsView(
+                modifier = Modifier,
+                textBeforeIcon = "Used",
+                textAfterIcon = "points",
+                iconSize = 14,
+                beforeStyle = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                    color = Color.Black
+                ),
+                afterStyle = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = Color.Black
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun AlreadyClaimedView() {
+    Column {
+        Row(
+            modifier = Modifier
+                .background(color = Color(0xffe0f2f0), shape = RoundedCornerShape(4.dp))
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                imageVector = Icons.Default.Check, contentDescription = null, tint = Color(0xff009681),
+                modifier = Modifier.width(8.dp)
+            )
+            Text(
+                text = "Already Claimed",
+                color = Color(0xff009681),
+                fontSize = 13.sp,
+                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+        Text(
+            text = "Voucher Code has  been shared to your registered email id.",
+            color = Color(0xff303030),
+            fontSize = 14.sp,
+            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
+            modifier = Modifier.padding(top = 8.dp, bottom = 13.dp)
+        )
+    }
+}
+
+@Composable
+private fun WorthView(price: String) {
+    Box(
+        Modifier
+            .background(color = Color(0xfffff7e1), shape = RoundedCornerShape(4.dp))
+            .padding(horizontal = 5.dp, vertical = 1.dp)
+    ) {
+        Text(text = buildAnnotatedString {
+            append("Worth ")
+            withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_BOLD))) {
+                append("₹ $price")
+            }
+        }, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR), color = Color.Black)
     }
 }
