@@ -67,10 +67,7 @@ private fun RewardDetailUI(modifier: Modifier = Modifier, data: RewardDetailData
             LoyaltyHeader(modifier = Modifier.fillMaxWidth(), points = data.earnedPoints) {
                 viewModel.sendUserEvent(LoyaltyUserEvents.BackBtnClicked)
             }
-            MainView(
-                modifier = Modifier
-                    .fillMaxWidth(), data
-            )
+            MainView(modifier = Modifier.fillMaxWidth(), data)
         }
         Box(
             Modifier
@@ -140,12 +137,15 @@ private fun MainView(modifier: Modifier, data: RewardDetailData) {
                     LoyaltySectionConstants.AboutThisReward -> {
                         AboutLoyaltyReward(modifier = Modifier.fillMaxWidth(), item)
                     }
+
                     LoyaltySectionConstants.HowToUseReward -> {
                         LoyaltyHowToUseView(modifier = Modifier.fillMaxWidth(), item)
                     }
+
                     LoyaltySectionConstants.Faq -> {
                         LoyaltyFAQView(modifier = Modifier.fillMaxWidth(), item)
                     }
+
                     LoyaltySectionConstants.TnC -> {
                         LoyaltyTermsConditionsView(modifier = Modifier.fillMaxWidth(), item)
                     }
