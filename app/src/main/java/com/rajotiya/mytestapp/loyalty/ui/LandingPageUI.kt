@@ -87,15 +87,20 @@ fun LandingPageUI(
     uiData?.let { LoadData(modifier = modifier, it, viewModel) }
 
     val rewardDetailResponse by viewModel.rewardDetails.collectAsState()
-    when (rewardDetailResponse.getContentIfNotHandled()){
-        is MBCoreResultEvent.OnFailure -> { showErrorMessageToast(LocalContext.current, "Some error occurred!") }
+    when (rewardDetailResponse.getContentIfNotHandled()) {
+        is MBCoreResultEvent.OnFailure -> {
+            showErrorMessageToast(LocalContext.current, "Some error occurred!")
+        }
+
         MBCoreResultEvent.OnLoading -> {
             LoaderUI(modifier)
         }
+
         is MBCoreResultEvent.OnSuccess -> {
-            viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.RedeemReward.name))
+            viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.EarnMoreForReward.name))
             LoaderUI(modifier)
         }
+
         null -> {}
     }
 }
@@ -109,7 +114,10 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
                 LandingPageTopSection(modifier = Modifier.fillMaxWidth())
             }
             item {
-                LandingPageRewardSection(modifier = Modifier.fillMaxWidth().offset(y = (-20).dp), onClaim = { viewModel.getRewardDetails(it)
+                LandingPageRewardSection(modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-20).dp), onClaim = {
+                    viewModel.getRewardDetails(it)
                 })
             }
             item {
@@ -184,7 +192,7 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun LandingPageRewardSection(modifier: Modifier = Modifier, onClaim:(id:String)->Unit) {
+private fun LandingPageRewardSection(modifier: Modifier = Modifier, onClaim: (id: String) -> Unit) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
