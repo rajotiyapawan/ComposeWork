@@ -27,6 +27,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +68,11 @@ fun LandingPageUI(
     viewModel: LoyaltyViewModel = LoyaltyLandingActivity.localViewModelCompositionLocal.current
 ) {
     val apiResponse by viewModel.landingPageData.collectAsState()
-    var uiData by remember { mutableStateOf<LoyaltyLandingPageData?>(null) }
+    var uiData by remember { mutableStateOf(viewModel.landingPageSavedDetailData) }
+    LaunchedEffect(Unit) {
+        if (uiData == null) viewModel.getLandingPageData()
+    }
+
     when (val response = apiResponse.getContentIfNotHandled()) {
         is MBCoreResultEvent.OnFailure -> {
             mbToast(LocalContext.current, "Some error occurred!")
@@ -79,6 +84,7 @@ fun LandingPageUI(
 
         is MBCoreResultEvent.OnSuccess -> {
             uiData = response.data
+            viewModel.saveLandingPageData(response.data)
         }
 
         null -> {}

@@ -72,11 +72,17 @@ class LoyaltyViewModel(
         MutableStateFlow(SingleLiveEvent(MBCoreResultEvent.OnLoading))
     val landingPageData = _landingPageData.asStateFlow()
 
+    private var _landingPageSavedData: LoyaltyLandingPageData?=null
+    val landingPageSavedDetailData get() = _landingPageSavedData
+
+    fun saveLandingPageData(data: LoyaltyLandingPageData) {
+        _landingPageSavedData = data}
+
     init {
         getLandingPageData()
     }
 
-    private fun getLandingPageData() {
+    fun getLandingPageData() {
         viewModelScope.launch {
             loyaltyUseCase.getLandingPageData().collect {
                 _landingPageData.value = SingleLiveEvent(it)
