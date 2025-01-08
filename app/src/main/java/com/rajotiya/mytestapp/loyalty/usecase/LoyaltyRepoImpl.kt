@@ -1,9 +1,14 @@
 package com.rajotiya.mytestapp.loyalty.usecase
 
 import com.rajotiya.mytestapp.loyalty.models.FaqItem
+import com.rajotiya.mytestapp.loyalty.models.InsufficientData
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyFaq
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyLandingPageData
 import com.rajotiya.mytestapp.loyalty.models.LoyaltySections
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTaskBenefitItem
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTaskBenefits
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTaskItem
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTasks
 import com.rajotiya.mytestapp.loyalty.models.MileStone
 import com.rajotiya.mytestapp.loyalty.models.Placeholder
 import com.rajotiya.mytestapp.loyalty.models.RewardDetailData
@@ -43,7 +48,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
             title = "MB Elite Club",
             titleUrl = "",
             subtitle = "Exclusive Offers, Rewards & more..",
-            pnts = "1500",
+            pnts = "15000",
             pnturl = "",
             tabs = listOf("What’s Elite Club?", "My Rewards", "How to Claim"),
             rwdurl = null, bgurl = null, vidId = null, vidurl = null,
@@ -161,6 +166,89 @@ class LoyaltyRepoImpl : LoyaltyRepo {
             worth = "1299",
             points = "10000",
             pnturl = "",
+            insufficient = "y",
+            insufficientPntData = InsufficientData(
+                title = "Insufficient Points", pointsToEarn = "3,000"
+            ),
+            tasks = LoyaltyTasks(
+                title = "How to earn more points?",
+                items = listOf(
+                    LoyaltyTaskItem(
+                        title = "Go On Property Site Visits",
+                        subtitle = "with Magicbricks",
+                        type = "sitevisit",
+                        points = "50000",
+                        benefits = LoyaltyTaskBenefits(
+                            title = "You Get",
+                            list = listOf(
+                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                            )
+                        ),
+                        cta = "Shortlist Projects"),
+                    LoyaltyTaskItem(
+                        title = "Go On Property Site Visits",
+                        subtitle = "with Magicbricks",
+                        type = "sitevisit",
+                        points = "50000",
+                        benefits = LoyaltyTaskBenefits(
+                            title = "You Get",
+                            list = listOf(
+                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                            )
+                        ),
+                        cta = "Shortlist Projects",
+                    ),
+                    LoyaltyTaskItem(
+                        title = "Go On Property Site Visits",
+                        subtitle = "with Magicbricks",
+                        type = "sitevisit",
+                        points = "50000",
+                        benefits = LoyaltyTaskBenefits(
+                            title = "You Get",
+                            list = listOf(
+                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                            )
+                        ),
+                        cta = "Shortlist Projects",
+                    ),
+                    LoyaltyTaskItem(
+                        title = "Go On Property Site Visits",
+                        subtitle = "with Magicbricks",
+                        type = "sitevisit",
+                        points = "50000",
+                        benefits = LoyaltyTaskBenefits(
+                            title = "You Get",
+                            list = listOf(
+                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                            )
+                        ),
+                        cta = "Shortlist Projects",
+                    ),
+                    LoyaltyTaskItem(
+                        title = "Go On Property Site Visits",
+                        subtitle = "with Magicbricks",
+                        type = "sitevisit",
+                        points = "50000",
+                        benefits = LoyaltyTaskBenefits(
+                            title = "You Get",
+                            list = listOf(
+                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                            )
+                        ),
+                        cta = "Shortlist Projects",
+                    ),
+                ),
+            ),
             items = listOf(
                 LoyaltySections(
                     text = "About this Reward",
@@ -177,7 +265,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet",
+                            itemType = "bullet",
                             placeholder = listOf(
                                 Placeholder(text = "500", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
                             )
@@ -188,7 +276,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "This reward cannot be sold, canceled, returned, refunded, or exchanged once claimed.",
@@ -196,7 +284,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         )
                     )
                 ),
@@ -224,7 +312,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "Log in to your BookMyShow account.",
@@ -232,7 +320,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "Choose the tickets you want to buy.",
@@ -240,7 +328,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "Go to the payment options and select the Gift Voucher payment method.",
@@ -248,7 +336,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "Enter the 16-digit gift card number in the Pay using gift voucher field.",
@@ -256,7 +344,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         ),
                         TextModel(
                             text = "Click Apply to buy tickets.",
@@ -264,7 +352,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                             weight = "Regular",
                             font = "Montserrat",
                             size = "12",
-                            itemtype = "bullet"
+                            itemType = "bullet"
                         )
                     )
                 ),

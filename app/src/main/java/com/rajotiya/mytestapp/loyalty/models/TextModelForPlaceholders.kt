@@ -1,6 +1,7 @@
 package com.rajotiya.mytestapp.loyalty.models
 
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 
 /**
  * Created by Pawan Rajotiya on 06-01-2025.
@@ -13,7 +14,9 @@ data class TextModel(
     val font: String,
     val weight: String,
     val size: String,
-    val itemtype: String?=null,
+    val lineHeight: String?=null,
+    val imgUrl: String?=null,
+    @SerializedName("itemtype") val itemType: String?=null,
     val placeholder: List<Placeholder>?=null
 )
 

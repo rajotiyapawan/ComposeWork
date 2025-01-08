@@ -72,7 +72,7 @@ private fun MainView(modifier: Modifier, data: RewardDetailData) {
             )
         }
         item{
-            HowToEarnPoints()
+            HowToEarnPoints(modifier = Modifier.fillMaxWidth(), headers = data.insufficientPntData, tasks = data.tasks)
         }
         data.items?.let {
             items(it) { item ->

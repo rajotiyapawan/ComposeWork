@@ -63,6 +63,7 @@ import com.rajotiya.mytestapp.loyalty.models.Rewards
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.LoaderUI
 import com.rajotiya.mytestapp.utility.MBCoreResultEvent
+import com.rajotiya.mytestapp.utility.getComposeImageFromUrl
 import com.rajotiya.mytestapp.utility.getFont
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.mbToast
@@ -99,7 +100,7 @@ fun LandingPageUI(
     uiData?.let { LoadData(modifier = modifier, it, viewModel) }
 
     val rewardDetailResponse by viewModel.rewardDetails.collectAsState()
-    when (rewardDetailResponse.getContentIfNotHandled()) {
+    when (val response = rewardDetailResponse.getContentIfNotHandled()) {
         is MBCoreResultEvent.OnFailure -> {
             showErrorMessageToast(LocalContext.current, "Some error occurred!")
         }
@@ -109,7 +110,11 @@ fun LandingPageUI(
         }
 
         is MBCoreResultEvent.OnSuccess -> {
-            viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.EarnMoreForReward.name))
+            if (response.data.insufficient?.equals("y") == true) {
+                viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.EarnMoreForReward.name))
+            } else {
+                viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.RedeemReward.name))
+            }
             LoaderUI(modifier)
         }
 
@@ -119,13 +124,18 @@ fun LandingPageUI(
 
 @Composable
 private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel: LoyaltyViewModel) {
-    var isCollapseVedioPlayerVisible by remember { mutableStateOf(true) }
+//    var isCollapseVedioPlayerVisible by remember { mutableStateOf(false) }
     Box {
-        LazyColumn(modifier = modifier
-            .background(color = Color(0xfff5f5f5))
-            .padding(bottom = 24.dp)) {
+        LazyColumn(
+            modifier = modifier
+                .background(color = Color(0xfff5f5f5))
+                .padding(bottom = 24.dp)
+        ) {
             item {
-                LandingPageTopSection(modifier = Modifier.fillMaxWidth())
+                LandingPageTopSection(
+                    modifier = Modifier.fillMaxWidth(),
+                    data,
+                    openLedger = { viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.PointsLedger.name)) })
             }
             item {
                 LandingPageRewardSection(modifier = Modifier
@@ -151,9 +161,11 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
             }
             data.faq?.items?.let {
                 items(it) { item ->
-                    LoyaltyFaqItem(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 20.dp, bottom = 12.dp), item)
+                    LoyaltyFaqItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 20.dp, bottom = 12.dp), item
+                    )
 //                    LandingPageFaq(
 //                        modifier = Modifier
 //                            .fillMaxWidth()
@@ -162,16 +174,16 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
                 }
             }
         }
-        if (isCollapseVedioPlayerVisible && false) {
-            LoyalityVideoPlayer(modifier = modifier, false) {
-                isCollapseVedioPlayerVisible = false
-            }
-        }
+//        if (isCollapseVedioPlayerVisible) {
+//            LoyalityVideoPlayer(modifier = modifier, false) {
+//                isCollapseVedioPlayerVisible = false
+//            }
+//        }
     }
 }
 
 @Composable
-private fun LandingPageTopSection(modifier: Modifier = Modifier) {
+private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLandingPageData, openLedger: () -> Unit) {
     val bgImage = ImageBitmap.imageResource(R.drawable.loyalty_landing_bg)
     Column(modifier = modifier
         .drawBehind {
@@ -182,9 +194,15 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier) {
         }
         .padding(bottom = 50.dp)
     ) {
-        HeaderView(modifier = Modifier.fillMaxWidth())
-        TabsView(modifier = Modifier.fillMaxWidth())
-        if (false) { // check if it is first visit to landing page else do not show
+        HeaderView(
+            modifier = Modifier.fillMaxWidth(),
+            title = data.title ?: "",
+            subTitle = data.subtitle ?: "",
+            points = data.pnts ?: "",
+            openLedger = openLedger
+        )
+        TabsView(modifier = Modifier.fillMaxWidth(), tabs = data.tabs)
+        if (data.vidurl?.isNotEmpty()==true) { // check if it is first visit to landing page else do not show
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,7 +216,7 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier) {
         TopReward(
             modifier = Modifier
                 .padding(vertical = 28.dp, horizontal = 22.dp)
-                .height(140.dp)
+                .height(140.dp), rewardUrl = data.rwdurl
         )
         MilestoneView(
             Modifier.fillMaxWidth(),
@@ -252,7 +270,7 @@ private fun LandingPageRewardSection(modifier: Modifier = Modifier, reward: Rewa
 }
 
 @Composable
-private fun HeaderView(modifier: Modifier = Modifier) {
+private fun HeaderView(modifier: Modifier = Modifier, title: String, subTitle: String, points: String, openLedger: () -> Unit) {
     Row(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 20.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -264,14 +282,14 @@ private fun HeaderView(modifier: Modifier = Modifier) {
                 .padding(start = 8.dp)
         ) {
             Text(
-                "MB Elite Club",
+                title,
                 fontSize = 16.sp,
                 letterSpacing = (-0.3).sp,
                 color = Color(0xfff1bd65),
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
             )
             Text(
-                "Exclusive Offers, Rewards & more..",
+                subTitle,
                 fontSize = 11.sp,
                 color = Color.White,
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
@@ -281,6 +299,7 @@ private fun HeaderView(modifier: Modifier = Modifier) {
         Row(
             Modifier
                 .padding(bottom = 10.dp)
+                .noRippleClick { openLedger() }
                 .background(Color(0x99000000), shape = RoundedCornerShape(100.dp))
                 .padding(6.dp), verticalAlignment = Alignment.CenterVertically
         ) {
@@ -291,7 +310,7 @@ private fun HeaderView(modifier: Modifier = Modifier) {
                     .padding(end = 4.dp)
             )
             Text(
-                text = "1500",
+                text = points,
                 color = Color(0xffe8b321),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
@@ -301,45 +320,50 @@ private fun HeaderView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun TabsView(modifier: Modifier = Modifier) {
-    val tabs = listOf("What’s Elite Club?", "My Rewards", "How to Claim")
-    val (selected, onSelection) = remember { mutableIntStateOf(0) }
-    Row(
-        modifier = modifier
-            .background(color = Color(0xe668345f))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        tabs.forEachIndexed { index, tabItem ->
-            if (index == selected) {
-                Text(
-                    tabItem,
-                    fontSize = 12.sp,
-                    lineHeight = 20.sp,
-                    color = Color(0xfff5f5f5),
-                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
-                    modifier = Modifier
-                        .background(color = Color(0xff41203a), shape = RoundedCornerShape(100.dp))
-                        .padding(horizontal = 8.dp)
-                )
-            } else {
-                Text(
-                    tabItem,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
-                    color = Color(0xfff5f5f5),
-                    modifier = Modifier.noRippleClick { onSelection(index) }
-                )
+private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?) {
+    tabs?.let {
+        val (selected, onSelection) = remember { mutableIntStateOf(0) }
+        Row(
+            modifier = modifier
+                .background(color = Color(0xe668345f))
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            tabs.forEachIndexed { index, tabItem ->
+                if (index == selected) {
+                    Text(
+                        tabItem,
+                        fontSize = 12.sp,
+                        lineHeight = 20.sp,
+                        color = Color(0xfff5f5f5),
+                        fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
+                        modifier = Modifier
+                            .background(color = Color(0xff41203a), shape = RoundedCornerShape(100.dp))
+                            .padding(horizontal = 8.dp)
+                    )
+                } else {
+                    Text(
+                        tabItem,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
+                        color = Color(0xfff5f5f5),
+                        modifier = Modifier.noRippleClick { onSelection(index) }
+                    )
+                }
             }
-        }
 
+        }
     }
 }
 
 @Composable
-private fun TopReward(modifier: Modifier = Modifier) {
-    Box(modifier = modifier)
+private fun TopReward(modifier: Modifier = Modifier, rewardUrl: String?) {
+    rewardUrl?.let {
+        Box(modifier = modifier) {
+            Image(painter = getComposeImageFromUrl(it), contentDescription = null)
+        }
+    }
 }
 
 @Composable

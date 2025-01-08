@@ -185,7 +185,7 @@ fun AboutLoyaltyReward(modifier: Modifier, item: LoyaltySections) {
         Spacer(modifier = Modifier.height(12.dp))
         item.items?.let {
             it.forEach { text: TextModel ->
-                if ("bullet" == (text.itemtype ?: "")) {
+                if ("bullet" == (text.itemType ?: "")) {
                     Row(verticalAlignment = Alignment.Top) {
                         Text("\u2022", color = getComposeColor(text.color))
                         Spacer(modifier = Modifier.width(8.dp))
@@ -240,7 +240,7 @@ fun LoyaltyHowToUseView(modifier: Modifier, item: LoyaltySections) {
             ) {
                 item.subtext?.let {
                     it.forEach { text: TextModel ->
-                        if ("bullet" == (text.itemtype ?: "")) {
+                        if ("bullet" == (text.itemType ?: "")) {
                             Row(verticalAlignment = Alignment.Top) {
                                 Text("\u2022", color = getComposeColor(text.color))
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -253,7 +253,7 @@ fun LoyaltyHowToUseView(modifier: Modifier, item: LoyaltySections) {
                 }
                 item.items?.let {
                     it.forEach { text: TextModel ->
-                        if ("bullet" == (text.itemtype ?: "")) {
+                        if ("bullet" == (text.itemType ?: "")) {
                             Row(verticalAlignment = Alignment.Top) {
                                 Text("\u2022", color = getComposeColor(text.color))
                                 Spacer(modifier = Modifier.width(8.dp))

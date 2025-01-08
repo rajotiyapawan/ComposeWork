@@ -59,53 +59,66 @@ fun TextWithIcon(
 }
 
 @Composable
-fun TextWithPlaceholders(textModel: TextModel) {
-    val annotatedString = buildAnnotatedString {
-        val mainText = textModel.text
-        var currentIndex = 0
+fun TextWithPlaceholders(textModel: TextModel,modifier: Modifier = Modifier) {
+    if (textModel.placeholder?.isNotEmpty() == true) {
+        val annotatedString = buildAnnotatedString {
+            val mainText = textModel.text
+            var currentIndex = 0
 
-        // Iterate over placeholders and format them in the main text
-        textModel.placeholder?.forEach { placeholder ->
-            val placeholderIndex = mainText.indexOf(placeholder.text, startIndex = currentIndex)
-            if (placeholderIndex != -1) {
-                // Add non-placeholder text
-                append(mainText.substring(currentIndex, placeholderIndex))
+            // Iterate over placeholders and format them in the main text
+            textModel.placeholder.forEach { placeholder ->
+                val placeholderIndex = mainText.indexOf(placeholder.text, startIndex = currentIndex)
+                if (placeholderIndex != -1) {
+                    // Add non-placeholder text
+                    append(mainText.substring(currentIndex, placeholderIndex))
 
-                // Add placeholder text with styling
-                withStyle(
-                    style = SpanStyle(
-                        color = ComposeColor(Color.parseColor(placeholder.color)),
-                        fontSize = placeholder.size.toFloat().sp,
-                        fontFamily = getComposeFont(font = placeholder.font, weight = placeholder.weight)
-                    )
-                ) {
-                    append(placeholder.text)
+                    // Add placeholder text with styling
+                    withStyle(
+                        style = SpanStyle(
+                            color = ComposeColor(Color.parseColor(placeholder.color)),
+                            fontSize = placeholder.size.toFloat().sp,
+                            fontFamily = getComposeFont(font = placeholder.font, weight = placeholder.weight)
+                        )
+                    ) {
+                        append(placeholder.text)
+                    }
+
+                    currentIndex = placeholderIndex + placeholder.text.length
                 }
+            }
 
-                currentIndex = placeholderIndex + placeholder.text.length
+            // Add remaining text after the last placeholder
+            if (currentIndex < mainText.length) {
+                append(mainText.substring(currentIndex))
             }
         }
 
-        // Add remaining text after the last placeholder
-        if (currentIndex < mainText.length) {
-            append(mainText.substring(currentIndex))
-        }
+        // Display the annotated text
+        Text(
+            text = annotatedString,
+            color = ComposeColor(Color.parseColor(textModel.color)),
+            fontSize = textModel.size.toFloat().sp,
+            fontFamily = getComposeFont(font = textModel.font, weight = textModel.weight),
+            lineHeight = textModel.lineHeight?.toFloat()?.sp ?: textModel.size.toFloat().sp,
+            modifier=modifier
+        )
+    } else {
+        Text(
+            text = textModel.text,
+            color = ComposeColor(Color.parseColor(textModel.color)),
+            fontSize = textModel.size.toFloat().sp,
+            fontFamily = getComposeFont(font = textModel.font, weight = textModel.weight),
+            lineHeight = textModel.lineHeight?.toFloat()?.sp ?: textModel.size.toFloat().sp,
+            modifier = modifier
+        )
     }
-
-    // Display the annotated text
-    Text(
-        text = annotatedString,
-        color = ComposeColor(Color.parseColor(textModel.color)),
-        fontSize = textModel.size.toFloat().sp,
-        fontFamily = getComposeFont(font = textModel.font, weight = textModel.weight)
-    )
 }
 
-fun getComposeColor(color:String) : ComposeColor {
+fun getComposeColor(color: String): ComposeColor {
     return ComposeColor(Color.parseColor(color))
 }
 
-fun getComposeFont(font:String, weight:String): FontFamily{
+fun getComposeFont(font: String, weight: String): FontFamily {
     return when (font) {
         "Montserrat" -> getComposeMontserratFont(weight)
         else -> getComposeMontserratFont(weight)

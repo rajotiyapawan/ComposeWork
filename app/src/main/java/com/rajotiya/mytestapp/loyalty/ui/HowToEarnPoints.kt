@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -34,11 +37,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.rajotiya.mytestapp.R
+import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
+import com.rajotiya.mytestapp.aob_revamp.utils.noRippleClick
+import com.rajotiya.mytestapp.loyalty.models.InsufficientData
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTaskItem
+import com.rajotiya.mytestapp.loyalty.models.LoyaltyTasks
 import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.getComposeImageFromUrl
 import com.rajotiya.mytestapp.utility.getFontFamily
 
 @Composable
-fun HowToEarnPoints(modifier: Modifier = Modifier) {
+fun HowToEarnPoints(modifier: Modifier = Modifier, headers: InsufficientData?, tasks: LoyaltyTasks?) {
     Box {
         Column(
             modifier = modifier
@@ -59,29 +68,39 @@ fun HowToEarnPoints(modifier: Modifier = Modifier) {
                     )
             ) {
                 Text(
-                    text = "How to earn more points?",
+                    text = tasks?.title ?: "",
                     color = Color(0xff303030),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.padding(start = 21.dp, top = 56.dp, bottom = 10.dp)
                 )
-                TaskItemView()
-                Spacer(Modifier.height(20.dp))
-                TaskItemView()
-                Spacer(Modifier.height(44.dp))
+                LazyColumn(
+                    modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 44.dp)
+                        .heightIn(max = 1500.dp)
+                        .padding(horizontal = 14.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    tasks?.items?.let {
+                        items(it) { task ->
+                            TaskItemView(modifier = Modifier.fillMaxWidth(), task, onViewDetailClick = {  }) {
+
+                            }
+                        }
+                    }
+                }
             }
 
         }
-        InsufficientPointsView()
+        InsufficientPointsView(title = headers?.title ?: "", pointsToEarn = headers?.pointsToEarn ?: "")
     }
 }
 
 @Composable
-private fun TaskItemView() {
+private fun TaskItemView(modifier: Modifier, task: LoyaltyTaskItem, onViewDetailClick:()->Unit ,onTaskClick:()->Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp)
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
@@ -104,24 +123,7 @@ private fun TaskItemView() {
                     .padding(vertical = 16.dp)
             ) {
                 Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp,
-                            )
-                        ) {
-                            append("Go On Property Site Visits ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                            )
-                        ) {
-                            append("with Magicbrick")
-                        }
-                    },
+                    text = task.title ?: "",
                     color = Color(0xff303030),
                     modifier = Modifier.padding(start = 16.dp, end = 80.dp)
                 )
@@ -131,7 +133,7 @@ private fun TaskItemView() {
                         .background(color = Color(0xfffff7e1), shape = RoundedCornerShape(4.dp))
                         .padding(horizontal = 7.dp, vertical = 3.dp),
                     textBeforeIcon = "Earn Up to",
-                    textAfterIcon = "50,000 points",
+                    textAfterIcon = "${task.points} points",
                     iconSize = 14,
                     beforeStyle = TextStyle(
                         fontSize = 12.sp,
@@ -145,20 +147,38 @@ private fun TaskItemView() {
                     )
                 )
 
-                Text(
-                    text = "You get:",
-                    color = Color(0xff000000),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(start = 17.dp, top = 14.dp)
-                )
-                Column(modifier = Modifier.padding(horizontal = 17.dp)) {
-                    Spacer(Modifier.height(7.dp))
-                    ImageTextView(R.drawable.ic_prime_bitmap_chat, "Free Cab Pickup & Drop Service")
-                    Spacer(Modifier.height(7.dp))
-                    ImageTextView(R.drawable.ic_prime_bitmap_chat, "Free Cab Pickup & Drop Service")
-                    Spacer(Modifier.height(7.dp))
-                    ImageTextView(R.drawable.ic_prime_bitmap_chat, "Free Cab Pickup & Drop Service")
+
+                task.benefits?.let { benefit ->
+                    Text(
+                        text = benefit.title ?: "",
+                        color = Color(0xff000000),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 17.dp, top = 14.dp)
+                    )
+                    Column(modifier = Modifier.padding(horizontal = 17.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        benefit.list?.let {
+                            it.forEach { benefitItem ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = getComposeImageFromUrl(benefitItem.imgUrl),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        benefitItem.text ?: "",
+                                        fontSize = 12.sp,
+                                        color = Color(0xff000000),
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
                 Row(
                     modifier = Modifier
@@ -167,14 +187,28 @@ private fun TaskItemView() {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "View Details",
-                        color = Color(0xff000000),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        style = TextStyle(textDecoration = TextDecoration.Underline)
-                    )
-                    BottomRedButton(enable = true, ctaText = "Shortlist Projects", onClick = {})
+                    Box(Modifier.noRippleClick { onViewDetailClick() }) {
+                        Text(
+                            text = "View Details",
+                            color = Color(0xff000000),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .background(color = mbRed, shape = RoundedCornerShape(50))
+                            .noRippleClick { onTaskClick() }
+                            .padding(horizontal = 20.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            task.cta ?: "",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                        )
+                    }
                 }
             }
         }
@@ -182,21 +216,7 @@ private fun TaskItemView() {
 }
 
 @Composable
-private fun ImageTextView(image: Int, text: String) {
-    Row(
-        modifier = Modifier.padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(painter = painterResource(image), contentDescription = null, modifier = Modifier.size(12.dp))
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text, fontSize = 12.sp, color = Color(0xff000000),
-        )
-    }
-}
-
-@Composable
-private fun InsufficientPointsView() {
+private fun InsufficientPointsView(title: String, pointsToEarn: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,7 +236,7 @@ private fun InsufficientPointsView() {
         )
         Column(Modifier.padding(start = 12.dp)) {
             Text(
-                text = "Insufficient Points",
+                text = title,
                 color = Color(0xffd8232a),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
@@ -225,7 +245,7 @@ private fun InsufficientPointsView() {
                 text = buildAnnotatedString {
                     append("You need to ")
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Earn 9,500 more points ")
+                        append("Earn $pointsToEarn more points ")
                     }
                     append("to redeem this reward")
                 },

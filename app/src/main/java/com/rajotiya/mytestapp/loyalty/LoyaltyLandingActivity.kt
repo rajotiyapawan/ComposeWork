@@ -28,11 +28,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rajotiya.mytestapp.loyalty.ui.EarnMoreForRewardUI
 import com.rajotiya.mytestapp.loyalty.ui.LandingPageUI
+import com.rajotiya.mytestapp.loyalty.ui.LoyaltyPointsLedgerView
 import com.rajotiya.mytestapp.loyalty.ui.LoyaltyRedeemRewardDetailsScreen
 
 
 enum class LoyaltyScreens {
-    LandingPage, RedeemReward, EarnMoreForReward, SVOptInDetailsScreen
+    LandingPage, RedeemReward, EarnMoreForReward, PointsLedger
 }
 
 class LoyaltyLandingActivity : ComponentActivity() {
@@ -98,6 +99,13 @@ class LoyaltyLandingActivity : ComponentActivity() {
                 popExitTransition = { defaultPopExitTransition() }) {
                 LoyaltyRedeemRewardDetailsScreen(modifier = Modifier.fillMaxSize())
             }
+            composable(route = LoyaltyScreens.PointsLedger.name,
+                enterTransition = { defaultEnterTransition() },
+                exitTransition = { defaultExitTransition() },
+                popEnterTransition = { defaultPopEnterTransition() },
+                popExitTransition = { defaultPopExitTransition() }) {
+                LoyaltyPointsLedgerView(modifier = Modifier.fillMaxSize())
+            }
         }
     }
 
@@ -135,7 +143,7 @@ class LoyaltyLandingActivity : ComponentActivity() {
     private fun HandleGaEvents() {
         val gaEvent by viewModel.gaEvents.observeAsState()
         gaEvent?.let { event ->
-            when(event) {
+            when (event) {
                 is LoyaltyGaEvents.BackClicked -> {}
                 LoyaltyGaEvents.DoNothing -> {}
                 is LoyaltyGaEvents.ResetClicked -> {}
