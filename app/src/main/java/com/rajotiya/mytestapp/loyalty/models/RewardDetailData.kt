@@ -31,11 +31,11 @@ data class LoyaltyTasks(
 
 @Keep
 data class LoyaltyTaskItem(
-    val title: String?,
-    val subtitle: String?,
+    val title: TextModel?,
     val type: String?,
     val points: String?,
     val pnturl: String? = null,
+    val imgUrl: String? = null,
     val cta: String?,
     val benefits: LoyaltyTaskBenefits?,
     val detail: LoyaltyTaskDetail? = null,
@@ -49,8 +49,7 @@ data class LoyaltyTaskBenefits(
 
 @Keep
 data class LoyaltyTaskBenefitItem(
-    val text: String?,
-    val subtext: String? = null,
+    val text: TextModel?,
     val imgUrl: String?,
     val type: String?,
 )

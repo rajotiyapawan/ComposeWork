@@ -59,7 +59,7 @@ fun TextWithIcon(
 }
 
 @Composable
-fun TextWithPlaceholders(textModel: TextModel,modifier: Modifier = Modifier) {
+fun TextWithPlaceholders(textModel: TextModel, modifier: Modifier = Modifier) {
     if (textModel.placeholder?.isNotEmpty() == true) {
         val annotatedString = buildAnnotatedString {
             val mainText = textModel.text

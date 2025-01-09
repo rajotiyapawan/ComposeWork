@@ -174,79 +174,210 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                 title = "How to earn more points?",
                 items = listOf(
                     LoyaltyTaskItem(
-                        title = "Go On Property Site Visits",
-                        subtitle = "with Magicbricks",
+                        title = TextModel(
+                            text = "Go On Property Site Visits with Magicbricks",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "12",
+                            itemType = "bullet",
+                            placeholder = listOf(
+                                Placeholder(text = "with Magicbricks", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
+                            )
+                        ),
                         type = "sitevisit",
                         points = "50000",
                         benefits = LoyaltyTaskBenefits(
                             title = "You Get",
                             list = listOf(
-                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
-                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
-                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Free Cab Pickup & Drop Service",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Dedicated Relationship manager",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Super Badge",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "superbadge")
                             )
                         ),
                         cta = "Shortlist Projects"),
                     LoyaltyTaskItem(
-                        title = "Go On Property Site Visits",
-                        subtitle = "with Magicbricks",
+                        title = TextModel(
+                            text = "Go On Property Site Visits with Magicbricks",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "12",
+                            itemType = "bullet",
+                            placeholder = listOf(
+                                Placeholder(text = "with Magicbricks", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
+                            )
+                        ),
                         type = "sitevisit",
                         points = "50000",
                         benefits = LoyaltyTaskBenefits(
                             title = "You Get",
                             list = listOf(
-                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
-                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
-                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Free Cab Pickup & Drop Service",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Dedicated Relationship manager",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Super Badge",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "superbadge")
                             )
                         ),
-                        cta = "Shortlist Projects",
-                    ),
+                        cta = "Shortlist Projects"),
                     LoyaltyTaskItem(
-                        title = "Go On Property Site Visits",
-                        subtitle = "with Magicbricks",
+                        title = TextModel(
+                            text = "Go On Property Site Visits with Magicbricks",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "12",
+                            itemType = "bullet",
+                            placeholder = listOf(
+                                Placeholder(text = "with Magicbricks", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
+                            )
+                        ),
                         type = "sitevisit",
                         points = "50000",
                         benefits = LoyaltyTaskBenefits(
                             title = "You Get",
                             list = listOf(
-                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
-                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
-                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Free Cab Pickup & Drop Service",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Dedicated Relationship manager",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Super Badge",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "superbadge")
                             )
                         ),
-                        cta = "Shortlist Projects",
-                    ),
+                        cta = "Shortlist Projects"),
                     LoyaltyTaskItem(
-                        title = "Go On Property Site Visits",
-                        subtitle = "with Magicbricks",
+                        title = TextModel(
+                            text = "Go On Property Site Visits with Magicbricks",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "12",
+                            itemType = "bullet",
+                            placeholder = listOf(
+                                Placeholder(text = "with Magicbricks", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
+                            )
+                        ),
                         type = "sitevisit",
                         points = "50000",
                         benefits = LoyaltyTaskBenefits(
                             title = "You Get",
                             list = listOf(
-                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
-                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
-                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Free Cab Pickup & Drop Service",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Dedicated Relationship manager",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Super Badge",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "superbadge")
                             )
                         ),
-                        cta = "Shortlist Projects",
-                    ),
+                        cta = "Shortlist Projects"),
                     LoyaltyTaskItem(
-                        title = "Go On Property Site Visits",
-                        subtitle = "with Magicbricks",
+                        title = TextModel(
+                            text = "Go On Property Site Visits with Magicbricks",
+                            color = "#303030",
+                            weight = "SemiBold",
+                            font = "Montserrat",
+                            size = "12",
+                            itemType = "bullet",
+                            placeholder = listOf(
+                                Placeholder(text = "with Magicbricks", color = "#303030", weight = "Regular", font = "Montserrat", size = "12")
+                            )
+                        ),
                         type = "sitevisit",
                         points = "50000",
                         benefits = LoyaltyTaskBenefits(
                             title = "You Get",
                             list = listOf(
-                                LoyaltyTaskBenefitItem(text = "Free Cab Pickup & Drop Service", imgUrl = "", type = "freecab"),
-                                LoyaltyTaskBenefitItem(text = "Dedicated Relationship manager", imgUrl = "", type = "rm"),
-                                LoyaltyTaskBenefitItem(text = "Super", subtext = "Badge", imgUrl = "", type = "superbadge")
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Free Cab Pickup & Drop Service",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "freecab"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Dedicated Relationship manager",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "rm"),
+                                LoyaltyTaskBenefitItem(text = TextModel(
+                                    text = "Super Badge",
+                                    color = "#303030",
+                                    weight = "Regular",
+                                    font = "Montserrat",
+                                    size = "12",
+                                ), imgUrl = "", type = "superbadge")
                             )
                         ),
-                        cta = "Shortlist Projects",
-                    ),
+                        cta = "Shortlist Projects"),
                 ),
             ),
             items = listOf(

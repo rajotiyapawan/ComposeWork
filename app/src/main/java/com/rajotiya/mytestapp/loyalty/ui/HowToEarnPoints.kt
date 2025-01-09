@@ -43,6 +43,7 @@ import com.rajotiya.mytestapp.loyalty.models.InsufficientData
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyTaskItem
 import com.rajotiya.mytestapp.loyalty.models.LoyaltyTasks
 import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.TextWithPlaceholders
 import com.rajotiya.mytestapp.utility.getComposeImageFromUrl
 import com.rajotiya.mytestapp.utility.getFontFamily
 
@@ -122,11 +123,12 @@ private fun TaskItemView(modifier: Modifier, task: LoyaltyTaskItem, onViewDetail
                 modifier = Modifier
                     .padding(vertical = 16.dp)
             ) {
-                Text(
-                    text = task.title ?: "",
-                    color = Color(0xff303030),
-                    modifier = Modifier.padding(start = 16.dp, end = 80.dp)
-                )
+                task.title?.let {
+                    TextWithPlaceholders(
+                        textModel = it,
+                        modifier = Modifier.padding(start = 16.dp, end = 80.dp)
+                    )
+                }
                 LoyaltyPointsView(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 6.dp)
@@ -169,12 +171,7 @@ private fun TaskItemView(modifier: Modifier, task: LoyaltyTaskItem, onViewDetail
                                         modifier = Modifier.size(12.dp)
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
-                                    Text(
-                                        benefitItem.text ?: "",
-                                        fontSize = 12.sp,
-                                        color = Color(0xff000000),
-                                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
-                                    )
+                                    benefitItem.text?.let { it1 -> TextWithPlaceholders(it1) }
                                 }
                             }
                         }

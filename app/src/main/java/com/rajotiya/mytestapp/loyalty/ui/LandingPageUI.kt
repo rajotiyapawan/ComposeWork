@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
@@ -202,7 +203,7 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLa
             openLedger = openLedger
         )
         TabsView(modifier = Modifier.fillMaxWidth(), tabs = data.tabs)
-        if (data.vidurl?.isNotEmpty()==true) { // check if it is first visit to landing page else do not show
+        if (data.vidurl?.isNotEmpty() == true) { // check if it is first visit to landing page else do not show
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -214,7 +215,7 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLa
             }
         }
         TopReward(
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 28.dp, horizontal = 22.dp)
                 .height(140.dp), rewardUrl = data.rwdurl
         )
@@ -360,9 +361,12 @@ private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?) {
 @Composable
 private fun TopReward(modifier: Modifier = Modifier, rewardUrl: String?) {
     rewardUrl?.let {
-        Box(modifier = modifier) {
-            Image(painter = getComposeImageFromUrl(it), contentDescription = null)
-        }
+        Image(
+            modifier = modifier,
+            painter = getComposeImageFromUrl(it),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
     }
 }
 
