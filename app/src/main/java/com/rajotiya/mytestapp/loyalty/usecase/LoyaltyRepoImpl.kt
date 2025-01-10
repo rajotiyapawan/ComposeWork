@@ -58,6 +58,11 @@ class LoyaltyRepoImpl : LoyaltyRepo {
                 MileStone(imgUrl = null, pnts = "", pntsD = "10k", locked = "y"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "12k", locked = "y"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "15k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "16k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "17k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "18k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "19k", locked = "y"),
+                MileStone(imgUrl = null, pnts = "", pntsD = "20k", locked = "y"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "30k", locked = "y"),
             ),
             rewards = Rewards(

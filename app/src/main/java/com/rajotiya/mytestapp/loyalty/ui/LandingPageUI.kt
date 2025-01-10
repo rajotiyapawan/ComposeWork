@@ -220,10 +220,10 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLa
                 .height(140.dp), rewardUrl = data.rwdurl
         )
         MilestoneView(
-            Modifier.fillMaxWidth(),
-            milestones = listOf("0", "1K", "2k", "10K", "12K"),
+            Modifier.fillMaxWidth().padding(top = 20.dp),
+            milestones = data.rwdsProgress,//listOf("0", "1K", "2k", "10K", "12K"),
             currentPoints = 1500,
-            progressLineHeight = 12
+            strokeWidth = 12
         )
     }
 }
