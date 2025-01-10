@@ -53,6 +53,7 @@ class LoyaltyRepoImpl : LoyaltyRepo {
             tabs = listOf("What’s Elite Club?", "My Rewards", "How to Claim"),
             rwdurl = null, bgurl = null, vidId = null, vidurl = null,
             rwdsProgress = listOf(
+                MileStone(imgUrl = null, pnts = "", pntsD = "0k", claimed = "y"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "1k", claimed = "y"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "2k"),
                 MileStone(imgUrl = null, pnts = "", pntsD = "10k", locked = "y"),

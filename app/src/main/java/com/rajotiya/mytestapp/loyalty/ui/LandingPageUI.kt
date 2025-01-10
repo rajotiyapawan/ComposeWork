@@ -2,7 +2,6 @@ package com.rajotiya.mytestapp.loyalty.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,13 +20,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,11 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -52,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.utils.noRippleClick
@@ -69,6 +66,7 @@ import com.rajotiya.mytestapp.utility.getFont
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.mbToast
 import com.rajotiya.mytestapp.utility.showErrorMessageToast
+import kotlinx.coroutines.launch
 
 @Composable
 fun LandingPageUI(
@@ -126,17 +124,31 @@ fun LandingPageUI(
 @Composable
 private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel: LoyaltyViewModel) {
 //    var isCollapseVedioPlayerVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val (tabSelected, onTabSelection) = remember { mutableIntStateOf(0) }
+    val scrollState = rememberLazyListState()
+
+    LaunchedEffect(tabSelected) {
+        if (tabSelected!=0) {
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(index = tabSelected)
+                onTabSelection(0)
+            }
+        }
+    }
+
     Box {
         LazyColumn(
+            state = scrollState,
             modifier = modifier
-                .background(color = Color(0xfff5f5f5))
                 .padding(bottom = 24.dp)
         ) {
             item {
                 LandingPageTopSection(
                     modifier = Modifier.fillMaxWidth(),
                     data,
-                    openLedger = { viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.PointsLedger.name)) })
+                    openLedger = { viewModel.sendUserEvent(LoyaltyUserEvents.NavigateTo(route = LoyaltyScreens.PointsLedger.name)) },
+                    tabSelected, onTabSelection)
             }
             item {
                 LandingPageRewardSection(modifier = Modifier
@@ -152,6 +164,7 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
             item {
                 Text(
                     modifier = Modifier
+                        .background(Color(0xfff5f5f5))
                         .fillMaxWidth()
                         .padding(top = 24.dp, start = 16.dp, end = 20.dp, bottom = 10.dp),
                     text = "FAQs",
@@ -184,7 +197,13 @@ private fun LoadData(modifier: Modifier, data: LoyaltyLandingPageData, viewModel
 }
 
 @Composable
-private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLandingPageData, openLedger: () -> Unit) {
+private fun LandingPageTopSection(
+    modifier: Modifier = Modifier,
+    data: LoyaltyLandingPageData,
+    openLedger: () -> Unit,
+    tabSelected: Int,
+    onTabSelection: (Int) -> Unit
+) {
     val bgImage = ImageBitmap.imageResource(R.drawable.loyalty_landing_bg)
     Column(modifier = modifier
         .drawBehind {
@@ -202,7 +221,7 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLa
             points = data.pnts ?: "",
             openLedger = openLedger
         )
-        TabsView(modifier = Modifier.fillMaxWidth(), tabs = data.tabs)
+        TabsView(modifier = Modifier.fillMaxWidth().zIndex(1f), tabs = data.tabs, tabSelected, onTabSelection)
         if (data.vidurl?.isNotEmpty() == true) { // check if it is first visit to landing page else do not show
             Box(
                 modifier = Modifier
@@ -215,14 +234,17 @@ private fun LandingPageTopSection(modifier: Modifier = Modifier, data: LoyaltyLa
             }
         }
         TopReward(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 28.dp, horizontal = 22.dp)
                 .height(140.dp), rewardUrl = data.rwdurl
         )
         MilestoneView(
-            Modifier.fillMaxWidth().padding(top = 20.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
             milestones = data.rwdsProgress,//listOf("0", "1K", "2k", "10K", "12K"),
-            currentPoints = 1500,
+            currentPoints = 13500,
             strokeWidth = 12
         )
     }
@@ -321,9 +343,8 @@ private fun HeaderView(modifier: Modifier = Modifier, title: String, subTitle: S
 }
 
 @Composable
-private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?) {
+private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?, tabSelected: Int, onTabSelection: (Int) -> Unit) {
     tabs?.let {
-        val (selected, onSelection) = remember { mutableIntStateOf(0) }
         Row(
             modifier = modifier
                 .background(color = Color(0xe668345f))
@@ -332,7 +353,7 @@ private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             tabs.forEachIndexed { index, tabItem ->
-                if (index == selected) {
+                if (index == tabSelected) {
                     Text(
                         tabItem,
                         fontSize = 12.sp,
@@ -349,7 +370,7 @@ private fun TabsView(modifier: Modifier = Modifier, tabs: List<String>?) {
                         fontSize = 12.sp,
                         fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
                         color = Color(0xfff5f5f5),
-                        modifier = Modifier.noRippleClick { onSelection(index) }
+                        modifier = Modifier.noRippleClick { onTabSelection(index) }
                     )
                 }
             }
@@ -367,70 +388,5 @@ private fun TopReward(modifier: Modifier = Modifier, rewardUrl: String?) {
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
-    }
-}
-
-@Composable
-private fun HowUI(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(
-            modifier = Modifier
-                .border(width = 1.dp, color = Color(0xffe8d5c5), shape = RoundedCornerShape(50))
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xff590250),
-                            Color(0xffd8232a)
-                        )
-                    ), shape = RoundedCornerShape(50)
-                )
-                .padding(
-                    top = 5.dp, bottom = 7.dp, start = 8.dp, end = 8
-                        .dp
-                ), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null)
-            Text("How?", fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)), fontSize = 14.sp, color = Color.White)
-        }
-        Row(
-            modifier = Modifier
-                .background(color = Color(0x26ffffff), shape = RoundedCornerShape(50))
-                .padding(vertical = 11.dp, horizontal = 24.dp)
-        ) {
-            Text("Earn Points", fontSize = 14.sp, color = Color.White, fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))
-            Icon(
-                Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = null, modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .size(width = 16.dp, height = 17.dp),
-                tint = Color(0xff909090)
-            )
-            Text(
-                "Claim Rewards!",
-                fontSize = 14.sp,
-                color = Color.White,
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
-            )
-        }
-    }
-}
-
-@Composable
-private fun LandingPageFaq(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .background(
-                color = Color.White, shape = RoundedCornerShape(8.dp)
-            )
-            .padding(12.dp), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            "What is MB Elite Club?",
-            color = textColorDark,
-            fontSize = 14.sp,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
-        )
-        Icon(Icons.Outlined.AddCircle, contentDescription = null)
     }
 }
