@@ -7,7 +7,8 @@ sealed class LoyaltyUserEvents {
     data class NavigateTo(
         val route: String,
         val saveToBackStack: Boolean = true,
-        val currentScreen: String = "") : LoyaltyUserEvents()
+        val currentScreen: String = "",
+        val refresh: Boolean = false) : LoyaltyUserEvents()
     data class PopBackTo(val route: String) : LoyaltyUserEvents()
     data object BackBtnClicked : LoyaltyUserEvents()
     data object DoNothing : LoyaltyUserEvents()

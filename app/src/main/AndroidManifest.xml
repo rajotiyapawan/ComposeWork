@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name="com.rajotiya.mytestapp.MyTestApplication"
+        android:name=".MyTestApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,18 +14,9 @@
         android:theme="@style/Theme.MyTestApp"
         tools:targetApi="31">
         <activity
-            android:name=".aob_revamp.AppOnBoardingComposeActivity"
+            android:name=".navigation.NavigationActivity"
             android:exported="true"
-            android:theme="@style/Theme.MyTestApp">
-        </activity>
-        <activity
-            android:name=".agent.boosterlead.AgentDetailPageActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MyTestApp">
-        </activity>
-        <activity
-            android:name=".loyalty.LoyaltyLandingActivity"
-            android:exported="true"
+            android:label="@string/title_activity_navigation"
             android:theme="@style/Theme.MyTestApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,11 +25,21 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".aob_revamp.AppOnBoardingComposeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyTestApp" />
+        <activity
+            android:name=".agent.boosterlead.AgentDetailPageActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyTestApp" />
+        <activity
+            android:name=".loyalty.LoyaltyLandingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyTestApp" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MyTestApp">
-        </activity>
+            android:theme="@style/Theme.MyTestApp" />
     </application>
 
 </manifest>
