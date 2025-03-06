@@ -2,8 +2,14 @@ package com.rajotiya.mytestapp.utility
 
 import android.graphics.Color
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -240,3 +246,23 @@ fun BottomPopupDialog(
     }
 }
 
+
+fun defaultEnterTransition(): EnterTransition {
+    return fadeIn(animationSpec = tween(durationMillis = 0)) +
+            slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300))
+}
+
+fun defaultExitTransition(): ExitTransition {
+    return fadeOut(animationSpec = tween(durationMillis = 0)) +
+            slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(300))
+}
+
+fun defaultPopEnterTransition(): EnterTransition {
+    return fadeIn(animationSpec = tween(durationMillis = 0)) +
+            slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300))
+}
+
+fun defaultPopExitTransition(): ExitTransition {
+    return fadeOut(animationSpec = tween(durationMillis = 0)) +
+            slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
+}

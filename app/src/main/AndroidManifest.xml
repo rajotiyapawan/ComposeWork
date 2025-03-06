@@ -14,7 +14,7 @@
         android:theme="@style/Theme.MyTestApp"
         tools:targetApi="31">
         <activity
-            android:name=".navigation.NavigationActivity"
+            android:name=".sitevisit_flow.SiteVisitFlowActivity"
             android:exported="true"
             android:label="@string/title_activity_navigation"
             android:theme="@style/Theme.MyTestApp">
@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:exported="true"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/Theme.MyTestApp" />
         <activity
             android:name=".aob_revamp.AppOnBoardingComposeActivity"
             android:exported="true"
