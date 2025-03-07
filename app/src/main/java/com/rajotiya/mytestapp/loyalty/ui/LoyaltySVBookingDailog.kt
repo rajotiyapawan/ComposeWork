@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,10 +41,12 @@ import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.getFont
 
 @Composable
- fun LoyaltySVBookingDailog(modifier: Modifier){
-    Box(modifier = Modifier
-        .fillMaxWidth().clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
-        ){
+fun LoyaltySVBookingDailog(modifier: Modifier) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
+    ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -75,9 +77,9 @@ private fun BottomView(modifier: Modifier = Modifier) {
         modifier = modifier
             .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
             .drawBehind {
-            drawShadowGradient()
+                drawShadowGradient()
             }
-            .padding(top=16.dp)
+            .padding(top = 16.dp)
             .clip(RoundedCornerShape(topStart = 23.dp, topEnd = 23.dp))
             .background(Color.White)
             .padding(16.dp)
@@ -91,13 +93,15 @@ fun DrawScope.drawShadowGradient() {
     drawRect(
         brush = Brush.verticalGradient(
             colors = listOf(
-                Color(0x19000000
+                Color(
+                    0x19000000
                 ), // Shadow color
                 Color.Transparent // No shadow
             )
         )
     )
 }
+
 @Composable
 private fun BottomRedButton(
     modifier: Modifier = Modifier,
@@ -125,7 +129,7 @@ private fun BottomRedButton(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Icon(
-                Icons.Default.KeyboardArrowRight, contentDescription = null,
+                Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null,
                 tint = Color.White,
             )
         }
@@ -136,18 +140,22 @@ private fun BottomRedButton(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SVScheduleView() {
-    Column (modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 16.dp, end = 16.dp)){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+    ) {
         Text(
             "When would you prefer to visit properties?",
             fontSize = 14.sp,
             color = Color(0xff303030),
             fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD))
         )
-        FlowRow(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 19.dp)) {
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 19.dp)
+        ) {
             SVScheduleItem("Today")
             SVScheduleItem("Today")
             SVScheduleItem("Today")
@@ -189,17 +197,18 @@ private fun SVScheduleItem(str: String) {
 
 @Composable
 private fun TopView() {
-    Box{
-        Image( painter = painterResource(id = R.drawable.loyalty_landing_bg)
-            , contentDescription = null,
+    Box {
+        Image(
+            painter = painterResource(id = R.drawable.loyalty_landing_bg), contentDescription = null,
             modifier = Modifier.fillMaxWidth()
         )
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 23.dp, start = 16.dp, end = 16.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 23.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            val annotatedStringFreeCabPickupDrop = buildAnnotatedString{
+        ) {
+            val annotatedStringFreeCabPickupDrop = buildAnnotatedString {
                 append(
                     AnnotatedString(
                         text = "FREE Cab",
@@ -222,11 +231,11 @@ private fun TopView() {
                 fontSize = 16.sp,
                 color = Color(0xff303030),
                 fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
-                modifier = Modifier.padding(top=4.dp)
+                modifier = Modifier.padding(top = 4.dp)
             )
-            Image( painter = painterResource(id = R.drawable.ic_loader_image_3)
-                , contentDescription = null,
-                modifier = Modifier.padding(vertical = 27.dp )
+            Image(
+                painter = painterResource(id = R.drawable.ic_loader_image_3), contentDescription = null,
+                modifier = Modifier.padding(vertical = 27.dp)
             )
         }
     }
@@ -236,6 +245,6 @@ private fun TopView() {
 
 @Preview
 @Composable
-private fun PreviewLoyaltySVBookingDailog(){
+private fun PreviewLoyaltySVBookingDailog() {
     LoyaltySVBookingDailog(modifier = Modifier.fillMaxWidth())
 }

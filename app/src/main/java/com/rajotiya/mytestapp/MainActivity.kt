@@ -21,11 +21,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ShoppingCart
-import androidx.compose.material.icons.sharp.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -161,8 +159,9 @@ private fun BottomCardsLayout() {
             .background(color = Color(0xff192129))
             .padding(8.dp)
     ) {
-        val (selected, onSelection) = remember{ androidx.compose.runtime.mutableStateOf(-1) }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)
+        val (selected, onSelection) = remember { androidx.compose.runtime.mutableStateOf(-1) }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             repeat(3) {
                 BottomCardItem(modifier = Modifier.weight(1f), selected, onSelection, it)
@@ -188,7 +187,7 @@ private fun BottomCardsLayout() {
 //                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
             )
             Icon(
-                Icons.Sharp.ArrowForward, contentDescription = null, modifier = Modifier
+                Icons.AutoMirrored.Sharp.ArrowForward, contentDescription = null, modifier = Modifier
                     .padding(start = 8.dp)
                     .height(18.dp)
             )
@@ -196,20 +195,21 @@ private fun BottomCardsLayout() {
     }
 }
 
-private val pkgArray = arrayListOf(Color(0xffd8d8d8),Color(0xff00c1d6),Color(0xffeac945))
+private val pkgArray = arrayListOf(Color(0xffd8d8d8), Color(0xff00c1d6), Color(0xffeac945))
 
 @Composable
 private fun BottomCardItem(modifier: Modifier, selected: Int, onSelection: (Int) -> Unit, index: Int) {
-    val borderRadius = if (selected==index) 2 else 1
+    val borderRadius = if (selected == index) 2 else 1
     val itemColor = pkgArray[index]
-    val borderColor = if (selected==index) itemColor else Color(0xff565b60)
-    Column(modifier = modifier
-        .selectable(
-            onClick = { onSelection(index) },
-            selected = selected == index
-        )
-        .border(width = borderRadius.dp, color = borderColor, shape = RoundedCornerShape(8.dp))
-    ){
+    val borderColor = if (selected == index) itemColor else Color(0xff565b60)
+    Column(
+        modifier = modifier
+            .selectable(
+                onClick = { onSelection(index) },
+                selected = selected == index
+            )
+            .border(width = borderRadius.dp, color = borderColor, shape = RoundedCornerShape(8.dp))
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -231,18 +231,21 @@ private fun BottomCardItem(modifier: Modifier, selected: Int, onSelection: (Int)
                     //                    fontFamily = FontFamily(getFont(Constants.MONTSERRAT_BOLD)),
                 )
             }
-            Box(modifier=Modifier.padding(end=8.dp, top=8.dp)) {
+            Box(modifier = Modifier.padding(end = 8.dp, top = 8.dp)) {
                 if (selected == index) {
-                    Icon(Icons.Rounded.CheckCircle, modifier = Modifier.size(18.dp),contentDescription = null, tint = itemColor)
+                    Icon(Icons.Rounded.CheckCircle, modifier = Modifier.size(18.dp), contentDescription = null, tint = itemColor)
                 } else {
-                    Box(modifier = Modifier
-                        .size(16.dp)
-                        .border(width = 1.dp, color = Color(0xff565b60), shape = RoundedCornerShape(50)))
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .border(width = 1.dp, color = Color(0xff565b60), shape = RoundedCornerShape(50))
+                    )
                 }
             }
         }
-        Row(modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

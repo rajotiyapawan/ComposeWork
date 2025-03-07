@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.core.content.res.ResourcesCompat
-import coil.compose.ImagePainter
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.rajotiya.mytestapp.AppContext
@@ -58,7 +58,7 @@ fun getFontFamily(font: String): FontFamily {
 }
 
 @Composable
-fun getComposeImageFromUrl(url: String?): ImagePainter {
+fun getComposeImageFromUrl(url: String?): AsyncImagePainter {
     return rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current).data(url ?: R.drawable.mbimageloader_no_image_new)
             .apply(block = fun ImageRequest.Builder.() {
