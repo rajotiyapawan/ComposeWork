@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.rajotiya.mytestapp.sitevisit_flow.ui.ConfirmSVBooking
 import com.rajotiya.mytestapp.sitevisit_flow.ui.FreeCabL1BookingScreen
 import com.rajotiya.mytestapp.sitevisit_flow.ui.SVPickUpLocationScreen
 import com.rajotiya.mytestapp.sitevisit_flow.ui.SiteVisitBooked
@@ -25,12 +26,12 @@ import com.rajotiya.mytestapp.utility.defaultPopExitTransition
 
 
 enum class SiteVisitScreens {
-    FreeCabIntro, SiteVisitBooked, SVPickUpLocation
+    FreeCabIntro, SiteVisitBooked, SVPickUpLocation, ConfirmBooking
 }
 
 class SiteVisitFlowActivity : ComponentActivity() {
 
-    private var startDestination = SiteVisitScreens.SVPickUpLocation.name
+    private var startDestination = SiteVisitScreens.ConfirmBooking.name
 
     companion object {
         const val START_SCREEN_NAME = "startScreen"
@@ -93,6 +94,13 @@ class SiteVisitFlowActivity : ComponentActivity() {
                 popEnterTransition = { defaultPopEnterTransition() },
                 popExitTransition = { defaultPopExitTransition() }) {
                 SVPickUpLocationScreen(modifier = Modifier.fillMaxSize())
+            }
+            composable(route = SiteVisitScreens.ConfirmBooking.name,
+                enterTransition = { defaultEnterTransition() },
+                exitTransition = { defaultExitTransition() },
+                popEnterTransition = { defaultPopEnterTransition() },
+                popExitTransition = { defaultPopExitTransition() }) {
+                ConfirmSVBooking(modifier = Modifier.fillMaxSize())
             }
         }
     }
