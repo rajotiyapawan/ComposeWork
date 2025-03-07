@@ -3,6 +3,7 @@ package com.rajotiya.mytestapp.sitevisit_flow.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -85,15 +87,37 @@ fun ConfirmSVBooking(modifier: Modifier = Modifier) {
                     Spacer(Modifier.width(7.dp))
                     Column {
                         Text("Project", fontSize = 12.sp, lineHeight = 19.sp, color = textColorLight, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR))
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(6.dp))
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                        ) {
-                            Text("Pavani Mirabilia, Whitefield, Bangalore", fontSize = 12.sp, lineHeight = 18.sp, color = textColorDark, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM))
-                            Text("₹1.75 Cr   |   3BHK   |   1726 sqft", fontSize = 12.sp, lineHeight = 18.sp, color = textColorExtraLight, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM))
-                            Text("Possession by Dec’25", fontSize = 12.sp, lineHeight = 18.sp, color = textColorExtraLight, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM))
+                        Column(Modifier.fillMaxWidth().padding(top = 2.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            repeat(2) {
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(6.dp))
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        "Pavani Mirabilia, Whitefield, Bangalore",
+                                        fontSize = 12.sp,
+                                        lineHeight = 18.sp,
+                                        color = textColorDark,
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
+                                    )
+                                    Text(
+                                        "₹1.75 Cr   |   3BHK   |   1726 sqft",
+                                        fontSize = 12.sp,
+                                        lineHeight = 18.sp,
+                                        color = textColorExtraLight,
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
+                                    )
+                                    Text(
+                                        "Possession by Dec’25",
+                                        fontSize = 12.sp,
+                                        lineHeight = 18.sp,
+                                        color = textColorExtraLight,
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -117,6 +141,8 @@ fun ConfirmSVBooking(modifier: Modifier = Modifier) {
                                 .padding(top = 5.dp)
                                 .fillMaxWidth()
                                 .height(142.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .border(width = 1.dp, color = Color(0xffd7d7d7), shape = RoundedCornerShape(10.dp))
                         ) {
                             Image(painter = painterResource(R.drawable.loyalty_landing_bg), contentDescription = null, contentScale = ContentScale.FillWidth)
                         }
