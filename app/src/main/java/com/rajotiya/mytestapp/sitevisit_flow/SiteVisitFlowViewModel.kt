@@ -1,9 +1,22 @@
-package com.til.mb.sitevisit_flow
+package com.rajotiya.mytestapp.sitevisit_flow
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.ConfirmSvBookingModel
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SiteVisitFlowData
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SvSavedResponse
+import com.rajotiya.mytestapp.utility.ComposeUIState
+import com.rajotiya.mytestapp.utility.MBCoreResultEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Created by Pawan Rajotiya on 06-03-2025.
@@ -15,5 +28,99 @@ class SiteVisitFlowViewModel: ViewModel() {
                 SiteVisitFlowViewModel()
             }
         }
+    }
+
+    // handling of user and ga events
+    private val _userEvents = MutableLiveData<SvFlowUserEvents?>()
+    val userEvents: LiveData<SvFlowUserEvents?>
+        get() = _userEvents
+    fun sendUserEvent(events: SvFlowUserEvents) {
+        _userEvents.value = events
+    }
+
+    fun clearUserEvent() {
+        viewModelScope.launch {
+            delay(500)
+            _userEvents.value = SvFlowUserEvents.DoNothing
+        }
+    }
+
+    fun getFreeCabIntroData(){
+
+    }
+
+    private var _confirmBookingData = MutableStateFlow<ComposeUIState<MBCoreResultEvent<ConfirmSvBookingModel>>>(ComposeUIState(isIdle = true))
+    val confirmBookingData = _confirmBookingData.asStateFlow()
+    fun getConfirmSvBooking(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _confirmBookingData.value = ComposeUIState(MBCoreResultEvent.OnLoading)
+            delay(500)
+            _confirmBookingData.value = ComposeUIState(MBCoreResultEvent.OnSuccess(getConfirmSvDummyData()))
+        }
+    }
+
+    private fun getConfirmSvDummyData(): ConfirmSvBookingModel {
+        return ConfirmSvBookingModel(
+            status = "1",
+            message = "Successfully Booked",
+            date = "Sun 9 Mar",
+            time = "9:00 PM",
+            projects = listOf(
+                SiteVisitFlowData.SvProjectItem(
+                    prjName = "Mb Project 1",
+                    prjCity = "Noida",
+                    price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
+                    possessionBy = "Dec'25"
+                ),
+                 SiteVisitFlowData.SvProjectItem(
+                    prjName = "Mb Project 1",
+                    prjCity = "Noida",
+                    price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
+                    possessionBy = "Dec'25"
+                )
+            ),
+            pickUpLocation = "Kailash Hospital, Sec 27, Noida"
+        )
+    }
+
+    private var _saveSvBooking = MutableStateFlow<ComposeUIState<MBCoreResultEvent<SvSavedResponse>>>(ComposeUIState(isIdle = true))
+    val saveSvBooking = _saveSvBooking.asStateFlow()
+    fun saveSvBooking(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _saveSvBooking.value = ComposeUIState(MBCoreResultEvent.OnLoading)
+            delay(500)
+            _saveSvBooking.value = ComposeUIState(MBCoreResultEvent.OnSuccess(getSvSavedResponseDummy()))
+        }
+    }
+
+    private fun getSvSavedResponseDummy(): SvSavedResponse{
+        return SvSavedResponse(
+            status = "1", message = "Booked Successfully",
+            date = "9 Mar", time = "10:00 PM",
+            bookingDetails = SvSavedResponse.SvBookingDetails(
+                projects = listOf(
+                    SiteVisitFlowData.SvProjectItem(
+                        prjName = "Mb Project 1",
+                        prjCity = "Noida",
+                        price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
+                        possessionBy = "Dec'25"
+                    ),
+                    SiteVisitFlowData.SvProjectItem(
+                        prjName = "Mb Project 1",
+                        prjCity = "Noida",
+                        price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
+                        possessionBy = "Dec'25"
+                    )
+                ),
+                date = "9 Mar", time = "10:00 PM", pickUpLocation = "Kailash Hospital, Sec 27, Noida"
+            ),
+            cabDetails = SvSavedResponse.SvCabDetails(
+                cabNumber = "HRXX XXXX12", cabModel = "White Etios Diesel",
+                driverName = "Driver Singh", driverRating = "4.5",
+                thingsToRemember = listOf("It's absolutely Free - no hidden charges!","You can visit multiple projects in one trip","Keep the cab & driver for your entire trip"),
+                note = "We will call you 30 mins before pickup to confirm your exact location"
+            ),
+            trackMsg = "You can track & edit your site visit bookings only on the App!"
+        )
     }
 }

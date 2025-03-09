@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
+import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
 
 @Preview(showBackground = true)
 @Composable
@@ -45,6 +48,7 @@ fun FreeCabBookingScreenPreview() {
 
 @Composable
 fun FreeCabL1BookingScreen(modifier: Modifier = Modifier) {
+    val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
 //    val backgroundPainter: Painter = painterResource(id = R.drawable.site_visit_freec_cab_bg_gradient)
     Column(
         modifier = modifier
@@ -131,7 +135,14 @@ fun FreeCabL1BookingScreen(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        viewModel.sendUserEvent(
+                            SvFlowUserEvents.NavigateTo(
+                                route = SiteVisitScreens.SVPickUpLocation.name, saveToBackStack = false,
+                                currentScreen = SiteVisitScreens.FreeCabIntro.name
+                            )
+                        )
+                    },
                     colors = ButtonDefaults.buttonColors(mbRed),
                     modifier = Modifier
                         .fillMaxWidth()
