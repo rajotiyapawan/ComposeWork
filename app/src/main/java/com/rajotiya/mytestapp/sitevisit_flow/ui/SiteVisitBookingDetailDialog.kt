@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SiteVisitFlowData
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SvSavedResponse
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.getFontFamily
 
@@ -31,7 +33,7 @@ import com.rajotiya.mytestapp.utility.getFontFamily
  */
 
 @Composable
-fun SVBookingDetailsDialog(modifier: Modifier = Modifier) {
+fun SVBookingDetailsDialog(modifier: Modifier = Modifier, bookingDetails: SvSavedResponse.SvBookingDetails) {
     Column(
         modifier = modifier
             .background(color = Color.White, shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
@@ -47,16 +49,16 @@ fun SVBookingDetailsDialog(modifier: Modifier = Modifier) {
         )
         ProjectDetails(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(), projects = bookingDetails.projects
         )
-        BookingDetailItem(modifier = Modifier.fillMaxWidth())
-        BookingDetailItem(modifier = Modifier.fillMaxWidth())
+        BookingDetailDateTimeItem(modifier = Modifier.fillMaxWidth(), bookingDetails.date, bookingDetails.time)
+        BookingDetailPickUpItem(modifier = Modifier.fillMaxWidth(), bookingDetails.pickUpLocation)
     }
 }
 
 
 @Composable
-private fun BookingDetailItem(modifier: Modifier = Modifier) {
+private fun BookingDetailDateTimeItem(modifier: Modifier = Modifier, date: String, time: String) {
     Row(modifier = modifier, verticalAlignment = Alignment.Top) {
         Icon(Icons.Default.Home, contentDescription = null)
         Spacer(Modifier.width(9.dp))
@@ -69,7 +71,7 @@ private fun BookingDetailItem(modifier: Modifier = Modifier) {
                 fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
             )
             Text(
-                "Tue 9 Feb  | 9:00 AM",
+                "$date  | $time",
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
                 color = textColorDark,
@@ -80,7 +82,31 @@ private fun BookingDetailItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ProjectDetails(modifier: Modifier = Modifier) {
+private fun BookingDetailPickUpItem(modifier: Modifier = Modifier, pickUpLocation: String) {
+    Row(modifier = modifier, verticalAlignment = Alignment.Top) {
+        Icon(Icons.Default.Home, contentDescription = null)
+        Spacer(Modifier.width(9.dp))
+        Column {
+            Text(
+                "Pickup Location",
+                fontSize = 12.sp,
+                lineHeight = 19.sp,
+                color = textColorLight,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+            )
+            Text(
+                "$pickUpLocation",
+                fontSize = 12.sp,
+                lineHeight = 20.sp,
+                color = textColorDark,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProjectDetails(modifier: Modifier = Modifier, projects: List<SiteVisitFlowData.SvProjectItem>) {
     Row(modifier = modifier, verticalAlignment = Alignment.Top) {
         Icon(Icons.Default.Home, contentDescription = null)
         Spacer(Modifier.width(9.dp))
@@ -93,11 +119,11 @@ private fun ProjectDetails(modifier: Modifier = Modifier) {
                 fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
             )
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                repeat(2) {
+                projects.forEach { projectItem ->
                     ProjectItem(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 2.dp)
+                            .padding(top = 2.dp), projectItem
                     )
                 }
             }
@@ -106,7 +132,7 @@ private fun ProjectDetails(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ProjectItem(modifier: Modifier = Modifier) {
+private fun ProjectItem(modifier: Modifier = Modifier, projectItem: SiteVisitFlowData.SvProjectItem) {
     Column(
         modifier = modifier
             .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(8.dp))
@@ -114,21 +140,21 @@ private fun ProjectItem(modifier: Modifier = Modifier) {
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Text(
-            "Pavani Mirabilia, Whitefield, Bangalore",
+            "${projectItem.prjName}, ${projectItem.prjCity}",
             fontSize = 12.sp,
             lineHeight = 18.sp,
             color = textColorDark,
             fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
         )
         Text(
-            "₹1.75 Cr   |   3BHK   |   1726 sqft",
+            "₹${projectItem.price}   |   ${projectItem.propType}   |   ${projectItem.area}",
             fontSize = 12.sp,
             lineHeight = 18.sp,
             color = textColorExtraLight,
             fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
         )
         Text(
-            "Possession by Dec’25",
+            "Possession by ${projectItem.possessionBy}",
             fontSize = 12.sp,
             lineHeight = 18.sp,
             color = textColorExtraLight,

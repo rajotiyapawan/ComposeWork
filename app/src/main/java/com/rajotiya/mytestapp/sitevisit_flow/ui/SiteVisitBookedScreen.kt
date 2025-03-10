@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,8 +41,13 @@ import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowViewModel
+import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
+import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SvSavedResponse
 import com.rajotiya.mytestapp.utility.BottomPopupDialog
 import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.MBCoreResultEvent
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.noRippleClick
 
@@ -50,17 +57,32 @@ import com.rajotiya.mytestapp.utility.noRippleClick
 
 @Composable
 fun SiteVisitBooked(modifier: Modifier = Modifier) {
+    val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
+    val savedResponse by viewModel.saveSvBooking.collectAsState()
+    when (val response = savedResponse.apiState) {
+        is MBCoreResultEvent.OnFailure -> {}
+        MBCoreResultEvent.OnLoading -> {}
+        is MBCoreResultEvent.OnSuccess -> {
+            InflateUI(modifier = modifier, data = response.data, viewModel = viewModel)
+        }
+
+        null -> {}
+    }
+}
+
+@Composable
+private fun InflateUI(modifier: Modifier = Modifier, data: SvSavedResponse, viewModel: SiteVisitFlowViewModel) {
     val showDetailPopUp = remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         LazyColumn(modifier = modifier) {
             item {
-                BookingDetails(modifier = Modifier.fillMaxWidth(), showDetailPopUp)
+                BookingDetails(modifier = Modifier.fillMaxWidth(), showDetailPopUp = showDetailPopUp, data.date, data.time)
             }
             item {
                 CabDetails(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp)
+                        .padding(top = 24.dp), data.cabDetails
                 )
             }
             item {
@@ -68,7 +90,7 @@ fun SiteVisitBooked(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 18.dp)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp), data.trackMsg
                 )
             }
         }
@@ -77,19 +99,19 @@ fun SiteVisitBooked(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(64.dp)
                 .align(Alignment.BottomCenter)
-        ) {}
+        ) { viewModel.sendUserEvent(SvFlowUserEvents.FinishFlow) }
     }
 
     BottomPopupDialog(
         showDialog = showDetailPopUp.value,
         onDismiss = { showDetailPopUp.value = false }
     ) {
-        SVBookingDetailsDialog(Modifier.fillMaxWidth())
+        SVBookingDetailsDialog(modifier = Modifier.fillMaxWidth(), bookingDetails = data.bookingDetails)
     }
 }
 
 @Composable
-private fun BookingDetails(modifier: Modifier = Modifier, showDetailPopUp: MutableState<Boolean>) {
+private fun BookingDetails(modifier: Modifier = Modifier, showDetailPopUp: MutableState<Boolean>, date: String, time: String) {
     Column(modifier = modifier.padding(top = 60.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(R.drawable.ic_tick_green), contentDescription = null)
         Spacer(Modifier.height(8.dp))
@@ -111,7 +133,7 @@ private fun BookingDetails(modifier: Modifier = Modifier, showDetailPopUp: Mutab
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Tue 9 Feb  | 9:00 AM",
+                "$date  | $time",
                 fontSize = 12.sp,
                 lineHeight = 19.sp,
                 color = textColorDark,
@@ -132,7 +154,7 @@ private fun BookingDetails(modifier: Modifier = Modifier, showDetailPopUp: Mutab
 }
 
 @Composable
-private fun CabDetails(modifier: Modifier = Modifier) {
+private fun CabDetails(modifier: Modifier = Modifier, cabDetails: SvSavedResponse.SvCabDetails) {
     Box(modifier = modifier.padding(horizontal = 16.dp), contentAlignment = Alignment.TopStart) {
         Card(
             modifier = Modifier.padding(top = 8.dp),
@@ -151,14 +173,14 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                 ) {
                     Column {
                         Text(
-                            "KAXX XXXX18",
+                            cabDetails.cabNumber,
                             color = textColorDark,
                             fontSize = 14.sp,
                             lineHeight = 19.sp,
                             fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
                         )
                         Text(
-                            "White ETIOS CNG",
+                            cabDetails.cabModel,
                             color = textColorExtraLight,
                             fontSize = 12.sp,
                             lineHeight = 19.sp,
@@ -166,7 +188,7 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                "Deepak Singh",
+                                cabDetails.driverName,
                                 color = textColorExtraLight,
                                 fontSize = 12.sp,
                                 lineHeight = 19.sp,
@@ -181,7 +203,7 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                             )
                             Spacer(Modifier.width(2.dp))
                             Text(
-                                "4.8",
+                                cabDetails.driverRating,
                                 color = textColorExtraLight,
                                 fontSize = 12.sp,
                                 lineHeight = 19.sp,
@@ -211,7 +233,7 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                             .background(color = Color(0xffb2dfd8))
                     )
                 }
-                repeat(3) {
+                cabDetails.thingsToRemember.forEach { item ->
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -224,8 +246,9 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                             contentDescription = null,
                             modifier = Modifier.size(12.dp)
                         )
+                        Spacer(Modifier.width(4.dp))
                         Text(
-                            "It's absolutely Free - no hidden charges!",
+                            text = item,
                             fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
                             fontSize = 12.sp,
                             lineHeight = 20.sp,
@@ -244,7 +267,7 @@ private fun CabDetails(modifier: Modifier = Modifier) {
                     Icon(Icons.Filled.ThumbUp, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "We will call you 30 mins before pickup to confirm your exact location",
+                        text = cabDetails.note,
                         fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
                         fontSize = 12.sp,
                         lineHeight = 16.sp,
@@ -270,7 +293,7 @@ private fun CabDetails(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun TrackYourBooking(modifier: Modifier = Modifier) {
+private fun TrackYourBooking(modifier: Modifier = Modifier, trackMsg: String) {
     Column(modifier) {
         Text(
             "Track your Bookings".uppercase(),
@@ -287,7 +310,7 @@ private fun TrackYourBooking(modifier: Modifier = Modifier) {
                 .padding(horizontal = 8.dp, vertical = 12.dp)
         ) {
             Text(
-                "You can track & edit your site visit bookings only on the App!",
+                trackMsg,
                 fontSize = 12.sp,
                 lineHeight = 18.sp,
                 color = textColorDark,
@@ -309,7 +332,8 @@ private fun BottomButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(1f), contentAlignment = Alignment.Center) {
+                .weight(1f), contentAlignment = Alignment.Center
+        ) {
             Box(
                 Modifier
                     .fillMaxWidth(0.5f)

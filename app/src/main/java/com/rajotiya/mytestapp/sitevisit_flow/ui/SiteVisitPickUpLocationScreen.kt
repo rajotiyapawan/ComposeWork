@@ -38,12 +38,16 @@ import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
+import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.noRippleClick
 
 @Composable
 fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
+    val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
     val (textValue, onValueChange) = remember { mutableStateOf("") }
     val localFocusManager = LocalFocusManager.current
     Column(modifier = modifier
@@ -62,12 +66,14 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(16.dp), contentAlignment = Alignment.CenterEnd
             ) {
-                Text(
-                    "Skip",
-                    textDecoration = TextDecoration.Underline,
-                    color = textColorLight,
-                    fontSize = 14.sp, lineHeight = 24.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-                )
+                Box(Modifier.noRippleClick { viewModel.sendUserEvent(SvFlowUserEvents.SkipBtnClicked) }) {
+                    Text(
+                        "Skip",
+                        textDecoration = TextDecoration.Underline,
+                        color = textColorLight,
+                        fontSize = 14.sp, lineHeight = 24.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
+                    )
+                }
             }
             Spacer(Modifier.height(12.dp))
             Column(
@@ -80,12 +86,14 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                 Row {
                     Text("Sun 9 Feb  | 9:00 AM", color = textColorLight, fontSize = 14.sp, lineHeight = 19.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR))
                     Spacer(Modifier.width(6.dp))
-                    Text(
-                        "Edit", modifier = Modifier.noRippleClick { }, color = mbRed, textDecoration = TextDecoration.Underline, fontSize = 14.sp, lineHeight = 19.sp, fontFamily = getFontFamily(
-                            Constants
-                                .MONTSERRAT_REGULAR
+                    Box(Modifier.noRippleClick { viewModel.sendUserEvent(SvFlowUserEvents.PopBackTo(route = SiteVisitScreens.FreeCabIntro.name)) }) {
+                        Text(
+                            "Edit", modifier = Modifier.noRippleClick { }, color = mbRed, textDecoration = TextDecoration.Underline, fontSize = 14.sp, lineHeight = 19.sp, fontFamily = getFontFamily(
+                                Constants
+                                    .MONTSERRAT_REGULAR
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -125,6 +133,7 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
             }
             SearchResultsView(modifier = Modifier.fillMaxWidth()) {
                 onValueChange(it)
+                viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
             }
         }
     }
