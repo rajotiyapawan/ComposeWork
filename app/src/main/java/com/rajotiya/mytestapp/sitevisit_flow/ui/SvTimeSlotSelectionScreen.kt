@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +54,7 @@ import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowViewModel
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
 import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
 import com.rajotiya.mytestapp.sitevisit_flow.TimeSlot
 import com.rajotiya.mytestapp.utility.Constants
@@ -76,7 +76,11 @@ fun SiteVisitTimeSlotSelectionScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun InflateUI(modifier: Modifier = Modifier, viewModel: SiteVisitFlowViewModel) {
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(
+        modifier = modifier
+            .background(color = Color.White)
+            .padding(16.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,7 +142,7 @@ private fun InflateUI(modifier: Modifier = Modifier, viewModel: SiteVisitFlowVie
             Spacer(modifier = Modifier.height(26.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "SELECT Time",
+                    text = "Select Time".uppercase(),
                     fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
                     fontSize = 12.sp,
                     color = textColorDark
@@ -189,7 +193,7 @@ private fun DateItem(modifier: Modifier = Modifier, item: Pair<String, String>, 
     val date = dateMonths[0]
     val month = dateMonths[1]
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(top = 4.dp, end = 4.dp)
             .height(82.dp),
         contentAlignment = Alignment.TopCenter
@@ -243,7 +247,7 @@ private fun DateItem(modifier: Modifier = Modifier, item: Pair<String, String>, 
                 )
             } else {
                 Text(
-                    text = date,
+                    text = dateMonth,
                     fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
                     fontSize = 12.sp, lineHeight = 16.sp,
                     color = textColorDark,
@@ -259,6 +263,7 @@ private fun DateItem(modifier: Modifier = Modifier, item: Pair<String, String>, 
                 contentDescription = null,
                 alignment = Alignment.TopEnd,
                 modifier = Modifier
+                    .size(16.dp)
                     .align(Alignment.TopEnd)
                     .offset(x = 4.dp, y = (-4).dp)
             )
@@ -367,6 +372,7 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
+            containerColor = Color.White,
             selectedTabIndex = selectedTabIndex,
             indicator = { tabPositions ->
                 val tabWidth = tabPositions[selectedTabIndex].width
@@ -410,8 +416,8 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 title,
-                                fontSize = 13.sp,
-                                color = if (selectedTabIndex == index) textColorDark else Color(0xff606060),
+                                fontSize = 12.sp, lineHeight = 14.sp,
+                                color = if (selectedTabIndex == index) textColorDark else textColorLight,
                                 fontFamily = if (selectedTabIndex == index) FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)) else FontFamily(
                                     getFont(Constants.MONTSERRAT_MEDIUM)
                                 )
@@ -428,9 +434,9 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
             state = listState,
             columns = GridCells.Fixed(2),
             modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(bottom = 60.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             val allItems = mutableListOf<Any>()
 
@@ -453,7 +459,7 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
+                                    .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
                                     painter = painterResource(
@@ -482,8 +488,10 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
                             TimeSlotItem(
                                 item,
                                 viewModel.selectedTime == item.id,
-                                viewModel,
-                                onClick = { viewModel.selectTime(item.id) }
+                                onClick = {
+                                    viewModel.selectTime(item.id)
+                                    viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.SVPickUpLocation.name))
+                                }
                             )
                         }
                     }
@@ -495,46 +503,41 @@ private fun TimeSlotScreen(viewModel: SiteVisitFlowViewModel) {
 }
 
 @Composable
-private fun TimeSlotItem(timeSlot: TimeSlot, isSelected: Boolean, viewModel: SiteVisitFlowViewModel, onClick: () -> Unit) {
+private fun TimeSlotItem(timeSlot: TimeSlot, isSelected: Boolean, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .height(45.dp)
-            .width(100.dp)
-            .border(
-                1.dp,
-                if (isSelected) Color(0xffb2dfd8) else Color(0xffd7d7d7),
-                RoundedCornerShape(20.dp)
-            )
-            .background(
-                if (isSelected) Color(0xffedfaf9) else Color(0xffffffff),
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        contentAlignment = Alignment.Center
+            .padding(top = 4.dp, end = 4.dp)
+            .noRippleClick { onClick() }
     ) {
-
+        Text(
+            text = timeSlot.time, textAlign = TextAlign.Center,
+            color = textColorDark,
+            fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
+            fontSize = 14.sp, lineHeight = 16.sp, modifier =
+            Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center)
+                .border(
+                    1.dp,
+                    if (isSelected) Color(0xffb2dfd8) else Color(0xffd7d7d7),
+                    RoundedCornerShape(50)
+                )
+                .background(
+                    if (isSelected) Color(0xffedfaf9) else Color(0xffffffff),
+                    shape = RoundedCornerShape(50)
+                )
+                .padding(vertical = 12.dp)
+        )
         if (isSelected) {
-            Text(
-                text = timeSlot.time,
-                color = textColorDark,
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
-                fontSize = 14.sp
-            )
             Image(
                 painter = painterResource(id = R.drawable.ic_tick_green),
                 contentDescription = null,
                 alignment = Alignment.TopEnd,
                 modifier = Modifier
+                    .size(16.dp)
                     .align(Alignment.TopEnd)
-                    .offset(x = 14.dp, y = -16.dp)
-            )
-        } else {
-            Text(
-                text = timeSlot.time,
-                color = textColorDark,
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
+                    .offset(x = 4.dp, y = (-4).dp)
             )
         }
     }
