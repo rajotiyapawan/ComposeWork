@@ -1,6 +1,8 @@
 package com.rajotiya.mytestapp.sitevisit_flow.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
@@ -39,17 +37,13 @@ import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
 import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
-
-@Preview(showBackground = true)
-@Composable
-fun FreeCabBookingScreenPreview() {
-    FreeCabL1BookingScreen()
-}
+import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.getFontFamily
+import com.rajotiya.mytestapp.utility.noRippleClick
 
 @Composable
-fun FreeCabL1BookingScreen(modifier: Modifier = Modifier) {
+fun FreeCabIntroScreen(modifier: Modifier = Modifier) {
     val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
-//    val backgroundPainter: Painter = painterResource(id = R.drawable.site_visit_freec_cab_bg_gradient)
     Column(
         modifier = modifier
             .padding(16.dp),
@@ -95,7 +89,7 @@ fun FreeCabL1BookingScreen(modifier: Modifier = Modifier) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Check",
-                        tint = Color.Green,
+                        tint = Color(0xff009681),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -112,56 +106,61 @@ fun FreeCabL1BookingScreen(modifier: Modifier = Modifier) {
                 .padding(vertical = 0.dp),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = Color(0xffffffff))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = buildAnnotatedString {
                         append("Do you want ")
-                        withStyle(style = SpanStyle(color = textColorDark, fontWeight = FontWeight.Bold)) {
+                        withStyle(style = SpanStyle(color = Color(0xff303030), fontWeight = FontWeight.Bold)) {
                             append("Free Cab")
                         }
                         append(" for visiting this property?")
                     },
-                    fontSize = 18.sp,
+                    fontSize = 16.sp, lineHeight = 22.sp, color = textColorDark,
                     textAlign = TextAlign.Start
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = {
-                        viewModel.sendUserEvent(
-                            SvFlowUserEvents.NavigateTo(
-                                route = SiteVisitScreens.SVPickUpLocation.name, saveToBackStack = false,
-                                currentScreen = SiteVisitScreens.FreeCabIntro.name
-                            )
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(mbRed),
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(24.dp)
-                ) {
-                    Text(text = "Yes", color = Color.White, fontSize = 16.sp)
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TextButton(
-                    onClick = { }
+                        .background(color = mbRed, shape = RoundedCornerShape(50))
+                        .padding(vertical = 6.dp)
+                        .noRippleClick {
+                            viewModel.sendUserEvent(
+                                SvFlowUserEvents.NavigateTo(
+                                    route = SiteVisitScreens.SvDateTimeSelection.name, saveToBackStack = false,
+                                    currentScreen = SiteVisitScreens.FreeCabIntro.name
+                                )
+                            )
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No, I don’t want Free Cab",
-                        color = textColorDark,
+                        text = "Yes",
+                        color = Color.White,
                         fontSize = 14.sp,
-                        textDecoration = TextDecoration.Underline
+                        lineHeight = 20.sp,
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(Modifier.noRippleClick {
+                    viewModel.sendUserEvent(SvFlowUserEvents.DenyFreeCab)
+                }) {
+                    Text(
+                        text = "No, I don’t want Free Cab",
+                        color = Color(0xff303030),
+                        fontSize = 14.sp,
+                        textDecoration = TextDecoration.Underline,
                     )
                 }
             }

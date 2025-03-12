@@ -11,6 +11,7 @@ sealed class SvFlowUserEvents {
     data object BackBtnClicked : SvFlowUserEvents()
     data object SkipBtnClicked : SvFlowUserEvents()
     data object NextWeekSelected : SvFlowUserEvents()
+    data object DenyFreeCab : SvFlowUserEvents()
     data object FinishFlow : SvFlowUserEvents()
     data object DoNothing : SvFlowUserEvents()
 }

@@ -1,5 +1,8 @@
 package com.rajotiya.mytestapp.sitevisit_flow
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -123,4 +126,48 @@ class SiteVisitFlowViewModel: ViewModel() {
             trackMsg = "You can track & edit your site visit bookings only on the App!"
         )
     }
+
+    var selectedTabIndex by mutableStateOf(0)
+    var selectedTime by mutableStateOf<Int?>(null)
+    var selectedDate by mutableStateOf<Int?>(null)
+
+    var tabTitles = listOf("Morning", "Afternoon", "Evening")
+    val timeSlots = listOf(
+        listOf( // Morning Slots
+            TimeSlot("9:00 AM", 1),
+            TimeSlot("9:30 AM", 2),
+            TimeSlot("10:00 AM", 3),
+            TimeSlot("10:30 AM", 4),
+            TimeSlot("11:00 AM", 5),
+            TimeSlot("11:30 AM", 6),
+        ),
+        listOf( // Afternoon Slots
+            TimeSlot("12:00 PM", 7),
+            TimeSlot("12:30 PM", 8),
+            TimeSlot("1:00 PM", 9),
+            TimeSlot("1:30 PM", 10),
+            TimeSlot("2:00 PM", 11),
+        ),
+        listOf( // Evening Slots
+            TimeSlot("5:00 PM", 12),
+            TimeSlot("5:30 PM", 13),
+            TimeSlot("6:00 PM", 14),
+            TimeSlot("6:30 PM", 15),
+            TimeSlot("7:00 PM", 16),
+        )
+    )
+
+    fun selectTab(index: Int) {
+        selectedTabIndex = index
+    }
+
+    fun selectTime(time: Int) {
+        selectedTime = time
+    }
+
+    fun selectDate(date: Int) {
+        selectedDate = date
+    }
 }
+
+data class TimeSlot(val time: String, val id: Int)

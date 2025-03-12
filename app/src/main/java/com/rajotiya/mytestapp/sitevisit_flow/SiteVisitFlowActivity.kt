@@ -21,9 +21,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rajotiya.mytestapp.sitevisit_flow.ui.ConfirmSVBooking
-import com.rajotiya.mytestapp.sitevisit_flow.ui.FreeCabL1BookingScreen
+import com.rajotiya.mytestapp.sitevisit_flow.ui.FreeCabIntroScreen
 import com.rajotiya.mytestapp.sitevisit_flow.ui.SVPickUpLocationScreen
 import com.rajotiya.mytestapp.sitevisit_flow.ui.SiteVisitBooked
+import com.rajotiya.mytestapp.sitevisit_flow.ui.SiteVisitTimeSlotSelectionScreen
 import com.rajotiya.mytestapp.utility.defaultEnterTransition
 import com.rajotiya.mytestapp.utility.defaultExitTransition
 import com.rajotiya.mytestapp.utility.defaultPopEnterTransition
@@ -31,7 +32,7 @@ import com.rajotiya.mytestapp.utility.defaultPopExitTransition
 
 
 enum class SiteVisitScreens {
-    FreeCabIntro, SiteVisitBooked, SVPickUpLocation, ConfirmBooking
+    FreeCabIntro, SvDateTimeSelection, SiteVisitBooked, SVPickUpLocation, ConfirmBooking
 }
 
 class SiteVisitFlowActivity : ComponentActivity() {
@@ -76,7 +77,7 @@ class SiteVisitFlowActivity : ComponentActivity() {
     @Composable
     fun MainViews(modifier: Modifier = Modifier) {
         val navController = rememberNavController()
-        HandleUserEvents(navController= navController)
+        HandleUserEvents(navController = navController)
         CompositionLocalProvider(value = LocalSiteVisitFlowViewModel provides viewModel) {
             PrepareNavGraph(modifier = modifier, navController = navController, startDestination = startDestination)
         }
@@ -93,7 +94,14 @@ class SiteVisitFlowActivity : ComponentActivity() {
                 exitTransition = { defaultExitTransition() },
                 popEnterTransition = { defaultPopEnterTransition() },
                 popExitTransition = { defaultPopExitTransition() }) {
-                FreeCabL1BookingScreen(modifier = Modifier.fillMaxSize())
+                FreeCabIntroScreen(modifier = Modifier.fillMaxSize())
+            }
+            composable(route = SiteVisitScreens.SvDateTimeSelection.name,
+                enterTransition = { defaultEnterTransition() },
+                exitTransition = { defaultExitTransition() },
+                popEnterTransition = { defaultPopEnterTransition() },
+                popExitTransition = { defaultPopExitTransition() }) {
+                SiteVisitTimeSlotSelectionScreen(modifier = Modifier.fillMaxSize())
             }
             composable(route = SiteVisitScreens.SiteVisitBooked.name,
                 enterTransition = { defaultEnterTransition() },
@@ -127,6 +135,7 @@ class SiteVisitFlowActivity : ComponentActivity() {
                 SvFlowUserEvents.BackBtnClicked -> {
                     navController.popBackStack()
                 }
+
                 SvFlowUserEvents.DoNothing -> {}
                 is SvFlowUserEvents.NavigateTo -> {
                     if (event.saveToBackStack) {
@@ -137,6 +146,7 @@ class SiteVisitFlowActivity : ComponentActivity() {
                         }
                     }
                 }
+
                 is SvFlowUserEvents.PopBackTo -> {
                     navController.popBackStack(route = event.route, inclusive = false)
                 }
@@ -144,6 +154,7 @@ class SiteVisitFlowActivity : ComponentActivity() {
                 SvFlowUserEvents.FinishFlow -> {}
                 SvFlowUserEvents.NextWeekSelected -> {}
                 SvFlowUserEvents.SkipBtnClicked -> {}
+                SvFlowUserEvents.DenyFreeCab -> {}
             }
             if (event !is SvFlowUserEvents.DoNothing) {
                 viewModel.clearUserEvent()
