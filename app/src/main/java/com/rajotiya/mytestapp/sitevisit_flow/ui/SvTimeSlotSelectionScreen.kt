@@ -71,6 +71,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun SiteVisitTimeSlotSelectionScreen(modifier: Modifier = Modifier) {
     val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
+    InflateUI(modifier = modifier, viewModel = viewModel)
+}
+
+@Composable
+private fun InflateUI(modifier: Modifier = Modifier, viewModel: SiteVisitFlowViewModel) {
     Column(modifier = modifier.padding(16.dp)) {
         Row(
             modifier = Modifier
@@ -95,7 +100,7 @@ fun SiteVisitTimeSlotSelectionScreen(modifier: Modifier = Modifier) {
                 withStyle(
                     style = SpanStyle(
                         color = Color(0xff009681),
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_BOLD)
                     )
                 ) {
                     append("Free")
@@ -153,7 +158,7 @@ fun SiteVisitTimeSlotSelectionScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DateSelectionGrid(viewModel: SiteVisitFlowViewModel) {
+private fun DateSelectionGrid(viewModel: SiteVisitFlowViewModel) {
     val dates = listOf(
         "TODAY" to "8 Feb", "TUE" to "9 Feb", "WED" to "10 Feb", "THU" to "11 Feb",
         "FRI" to "12 Feb", "SAT" to "13 Feb", "SUN" to "14 Feb", "" to "Next \nWeek"
@@ -284,7 +289,7 @@ private fun WhatYouGetSection() {
                     ),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(16.dp)
+                .padding(12.dp)
         ) {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -292,7 +297,7 @@ private fun WhatYouGetSection() {
                         text = "WHAT YOU GET",
                         fontFamily = FontFamily(getFont(Constants.MONTSERRAT_SEMIBOLD)),
                         color = textColorDark,
-                        fontSize = 12.sp
+                        fontSize = 12.sp, lineHeight = 24.sp
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     HorizontalDivider(
@@ -301,10 +306,13 @@ private fun WhatYouGetSection() {
                         color = Color(0xffb2dfd8)
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                PointsView("It's absolutely Free - no hidden charges!")
-                PointsView("Visit multiple projects in one trip")
-                PointsView("Keep the cab & driver for your entire trip")
+                Spacer(modifier = Modifier.height(4.dp))
+                val pointsList = listOf(
+                    "It's absolutely Free - no hidden charges!",
+                    "Visit multiple projects in one trip",
+                    "Keep the cab & driver for your entire trip"
+                )
+                pointsList.forEach { item -> PointsView(item) }
             }
         }
     }
@@ -313,16 +321,17 @@ private fun WhatYouGetSection() {
 @Composable
 private fun PointsView(text: String) {
     Column {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 Icons.Default.Check, tint = Color(0xff009681),
-                contentDescription = null
+                contentDescription = null, modifier = Modifier.size(14.dp)
             )
+            Spacer(Modifier.width(4.dp))
             Text(
                 text = text,
                 color = textColorDark,
-                fontFamily = FontFamily(getFont(Constants.MONTSERRAT)),
-                fontSize = 14.sp
+                fontFamily = FontFamily(getFont(Constants.MONTSERRAT_REGULAR)),
+                fontSize = 14.sp, lineHeight = 20.sp
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
