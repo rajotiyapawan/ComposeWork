@@ -31,13 +31,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +61,7 @@ import com.rajotiya.mytestapp.utility.noRippleClick
 @Composable
 fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
     val viewModel = SiteVisitFlowActivity.LocalSiteVisitFlowViewModel.current
-    val (textValue, onValueChange) = remember { mutableStateOf("") }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val localFocusManager = LocalFocusManager.current
     Column(modifier = modifier
         .noRippleClick {
@@ -98,19 +101,21 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
-                SvSearchBox(modifier = Modifier.fillMaxWidth(), textValue, onValueChange = {
-                    onValueChange(it)
-                    viewModel.getLocationSearchResults(it)
+                SvSearchBox(modifier = Modifier.fillMaxWidth(), textFieldValue, onValueChange = {
+                    textFieldValue = it
+                    viewModel.getLocationSearchResults(it.text)
                 })
-                if (textValue.isEmpty()) {
-                    SvPickUpLocationNote(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 17.dp))
+                if (textFieldValue.text.isEmpty()) {
+                    SvPickUpLocationNote(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 17.dp)
+                    )
                 }
                 HandleSearchResults(modifier = Modifier.fillMaxWidth(), viewModel = viewModel) {
-                    onValueChange(it)
+                    textFieldValue = TextFieldValue(text = it, selection = TextRange(it.length))
                     viewModel.savePickUpLocation(it)
-                    viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
+//                    viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
                 }
             }
         }
@@ -159,7 +164,7 @@ private fun SvPickUpLocationHeading(modifier: Modifier = Modifier, onEdit: () ->
 }
 
 @Composable
-private fun SvSearchBox(modifier: Modifier = Modifier, textValue: String, onValueChange: (String)->Unit) {
+private fun SvSearchBox(modifier: Modifier = Modifier, textValue: TextFieldValue, onValueChange: (TextFieldValue) -> Unit) {
     OutlinedTextField(
         value = textValue,
         onValueChange,
@@ -207,22 +212,27 @@ private fun SvPickUpLocationNote(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun HandleSearchResults(modifier: Modifier = Modifier,viewModel: SiteVisitFlowViewModel, onSearchItemSelected: (item: String) -> Unit) {
+private fun HandleSearchResults(
+    modifier: Modifier = Modifier,
+    viewModel: SiteVisitFlowViewModel,
+    onSearchItemSelected: (item: String) -> Unit
+) {
     val searchResults by viewModel.svLocationSearch.collectAsState()
-    if (!searchResults.isIdle){
-        when(val response = searchResults.apiState) {
+    if (!searchResults.isIdle) {
+        when (val response = searchResults.apiState) {
             is MBCoreResultEvent.OnFailure -> {}
             MBCoreResultEvent.OnLoading -> {}
             is MBCoreResultEvent.OnSuccess -> {
                 SearchResultsView(modifier = modifier, data = response.data, onSearchItemSelected = onSearchItemSelected)
             }
+
             null -> {}
         }
     }
 }
 
 @Composable
-private fun SearchResultsView(modifier: Modifier = Modifier, data:List<String>, onSearchItemSelected: (item: String) -> Unit) {
+private fun SearchResultsView(modifier: Modifier = Modifier, data: List<String>, onSearchItemSelected: (item: String) -> Unit) {
     LazyColumn(
         modifier = modifier
             .heightIn(max = 200.dp)
