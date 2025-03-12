@@ -115,7 +115,7 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                 HandleSearchResults(modifier = Modifier.fillMaxWidth(), viewModel = viewModel) {
                     textFieldValue = TextFieldValue(text = it, selection = TextRange(it.length))
                     viewModel.savePickUpLocation(it)
-//                    viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
+                    viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
                 }
             }
         }

@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -142,7 +139,7 @@ private fun DateTimeView(modifier: Modifier = Modifier, date: String, time: Stri
     Row(
         modifier = modifier, verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Outlined.DateRange, contentDescription = null)
+        Image(painter = painterResource(R.drawable.ic_calendar), contentDescription = null)
         Spacer(Modifier.width(7.dp))
         Column {
             Text(
@@ -179,7 +176,7 @@ private fun DateTimeView(modifier: Modifier = Modifier, date: String, time: Stri
 @Composable
 private fun ProjectsSelectedView(modifier: Modifier = Modifier, projects: List<SiteVisitFlowData.SvProjectItem>) {
     Row(modifier = modifier) {
-        Icon(Icons.Outlined.DateRange, contentDescription = null)
+        Image(painter = painterResource(R.drawable.ic_project), contentDescription = null)
         Spacer(Modifier.width(7.dp))
         Column {
             Text(
@@ -201,7 +198,7 @@ private fun ProjectsSelectedView(modifier: Modifier = Modifier, projects: List<S
 @Composable
 private fun PickUpLocationView(modifier: Modifier = Modifier, pickUpLocation: String, onEdit: () -> Unit) {
     Row(modifier = modifier) {
-        Icon(Icons.Outlined.DateRange, contentDescription = null)
+        Image(painter = painterResource(R.drawable.ic_location_marker), contentDescription = null)
         Spacer(Modifier.width(7.dp))
         Column {
             Text(
