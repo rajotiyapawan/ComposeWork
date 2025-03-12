@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.rajotiya.mytestapp.sitevisit_flow.domain.models.ConfirmSvBookingModel
 import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SiteVisitFlowData
 import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SvSavedResponse
 import com.rajotiya.mytestapp.utility.ComposeUIState
@@ -19,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -32,6 +32,10 @@ class SiteVisitFlowViewModel: ViewModel() {
             }
         }
     }
+
+    // save and handle SvFlowData
+    private val _svFlowData = MutableStateFlow(SiteVisitFlowData())
+    val svFlowData = _svFlowData.asStateFlow()
 
     // handling of user and ga events
     private val _userEvents = MutableLiveData<SvFlowUserEvents?>()
@@ -52,37 +56,46 @@ class SiteVisitFlowViewModel: ViewModel() {
 
     }
 
-    private var _confirmBookingData = MutableStateFlow<ComposeUIState<MBCoreResultEvent<ConfirmSvBookingModel>>>(ComposeUIState(isIdle = true))
-    val confirmBookingData = _confirmBookingData.asStateFlow()
-    fun getConfirmSvBooking(){
+    private var _svLocationSearch = MutableStateFlow<ComposeUIState<MBCoreResultEvent<List<String>>>>(ComposeUIState(isIdle = true))
+    val svLocationSearch = _svLocationSearch.asStateFlow()
+
+    fun getLocationSearchResults(query: String){
         viewModelScope.launch(Dispatchers.IO) {
-            _confirmBookingData.value = ComposeUIState(MBCoreResultEvent.OnLoading)
-            delay(500)
-            _confirmBookingData.value = ComposeUIState(MBCoreResultEvent.OnSuccess(getConfirmSvDummyData()))
+            if (query.isEmpty() || query.length<3) {
+                _svLocationSearch.value = ComposeUIState(isIdle = true)
+            } else {
+                _svLocationSearch.value = ComposeUIState(MBCoreResultEvent.OnLoading)
+                delay(400)
+                _svLocationSearch.value = ComposeUIState(MBCoreResultEvent.OnSuccess(listOf(
+                    "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida",
+                    "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida"
+                )))
+            }
         }
     }
 
-    private fun getConfirmSvDummyData(): ConfirmSvBookingModel {
-        return ConfirmSvBookingModel(
-            status = "1",
-            message = "Successfully Booked",
-            date = "Sun 9 Mar",
-            time = "9:00 PM",
-            projects = listOf(
-                SiteVisitFlowData.SvProjectItem(
-                    prjName = "Mb Project 1",
-                    prjCity = "Noida",
-                    price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
-                    possessionBy = "Dec'25"
-                ),
-                 SiteVisitFlowData.SvProjectItem(
-                    prjName = "Mb Project 1",
-                    prjCity = "Noida",
-                    price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
-                    possessionBy = "Dec'25"
-                )
-            ),
-            pickUpLocation = "Kailash Hospital, Sec 27, Noida"
+    fun savePickUpLocation(location:String){
+        _svFlowData.update { current ->
+            current.copy(pickUpLocation = location)
+        }
+        _svLocationSearch.value = ComposeUIState(isIdle = true)
+        addDummyProjects()
+    }
+
+    private fun addDummyProjects(){
+        _svFlowData.update { current ->
+            current.copy(projects = listOf(
+                getDummyProjectItem(), getDummyProjectItem()
+            ))
+        }
+    }
+
+    private fun getDummyProjectItem(): SiteVisitFlowData.SvProjectItem {
+        return SiteVisitFlowData.SvProjectItem(
+            prjName = "Mb Project 1",
+            prjCity = "Noida",
+            price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
+            possessionBy = "Dec'25"
         )
     }
 

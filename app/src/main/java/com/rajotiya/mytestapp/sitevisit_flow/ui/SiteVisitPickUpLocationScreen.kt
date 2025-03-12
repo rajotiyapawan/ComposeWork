@@ -27,6 +27,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,9 +46,12 @@ import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
+import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowViewModel
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
 import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
+import com.rajotiya.mytestapp.sitevisit_flow.ui.common_views.SvCommonTopBar
 import com.rajotiya.mytestapp.utility.Constants
+import com.rajotiya.mytestapp.utility.MBCoreResultEvent
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.noRippleClick
 
@@ -66,64 +71,22 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                 .background(color = Color.White)
                 .padding(bottom = 12.dp)
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp), contentAlignment = Alignment.CenterEnd
-            ) {
-                Box(Modifier.noRippleClick { viewModel.sendUserEvent(SvFlowUserEvents.SkipBtnClicked) }) {
-                    Text(
-                        "Skip",
-                        textDecoration = TextDecoration.Underline,
-                        color = textColorLight,
-                        fontSize = 14.sp, lineHeight = 24.sp, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-                    )
-                }
-            }
+            SvCommonTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                onBack = { viewModel.sendUserEvent(SvFlowUserEvents.SkipBtnClicked) })
             Spacer(Modifier.height(12.dp))
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            ) {
-                Text(
-                    "Enter Pickup Location",
-                    color = textColorDark,
-                    fontSize = 18.sp,
-                    lineHeight = 24.sp,
-                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
-                )
-                Spacer(Modifier.height(3.dp))
-                Row {
-                    Text(
-                        "Sun 9 Feb  | 9:00 AM",
-                        color = textColorLight,
-                        fontSize = 14.sp,
-                        lineHeight = 19.sp,
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Box(Modifier.noRippleClick { viewModel.sendUserEvent(SvFlowUserEvents.PopBackTo(route = SiteVisitScreens.FreeCabIntro.name)) }) {
-                        Text(
-                            "Edit",
-                            modifier = Modifier.noRippleClick { },
-                            color = mbRed,
-                            textDecoration = TextDecoration.Underline,
-                            fontSize = 14.sp,
-                            lineHeight = 19.sp,
-                            fontFamily = getFontFamily(
-                                Constants
-                                    .MONTSERRAT_REGULAR
-                            )
-                        )
-                    }
-                }
-            }
+            SvPickUpLocationHeading(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+                onEdit = {
+                    viewModel.sendUserEvent(SvFlowUserEvents.PopBackTo(route = SiteVisitScreens.FreeCabIntro.name))
+                })
         }
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(1f)) {
+                .weight(1f)
+        ) {
             Image(
                 painter = painterResource(R.drawable.sv_pickup_location_bg),
                 contentDescription = null,
@@ -135,52 +98,18 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
-                OutlinedTextField(
-                    value = textValue,
-                    onValueChange,
-                    textStyle = TextStyle(
-                        fontSize = 14.sp,
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                        color = textColorLight
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(
-                            "Enter Locality/Project/Landmark",
-                            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
-                            fontSize = 14.sp,
-                            color = textColorLight
-                        )
-                    },
-                    trailingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                    shape = RoundedCornerShape(8.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White, unfocusedContainerColor = Color.White,
-                        focusedBorderColor = Color(0xff909090), unfocusedBorderColor = Color(0xffd7d7d7)
-                    )
-                )
-                if (textValue.isEmpty()) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 17.dp)
-                            .background(color = Color(0xffFFF7E1), shape = RoundedCornerShape(4.dp))
-                            .padding(horizontal = 8.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Outlined.Info, contentDescription = null, modifier = Modifier.size(10.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            "Share your exact location at the time of pickup",
-                            fontSize = 12.sp,
-                            lineHeight = 24.sp,
-                            color = textColorDark,
-                            fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
-                        )
-                    }
-                }
-                SearchResultsView(modifier = Modifier.fillMaxWidth()) {
+                SvSearchBox(modifier = Modifier.fillMaxWidth(), textValue, onValueChange = {
                     onValueChange(it)
+                    viewModel.getLocationSearchResults(it)
+                })
+                if (textValue.isEmpty()) {
+                    SvPickUpLocationNote(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 17.dp))
+                }
+                HandleSearchResults(modifier = Modifier.fillMaxWidth(), viewModel = viewModel) {
+                    onValueChange(it)
+                    viewModel.savePickUpLocation(it)
                     viewModel.sendUserEvent(SvFlowUserEvents.NavigateTo(route = SiteVisitScreens.ConfirmBooking.name))
                 }
             }
@@ -189,24 +118,127 @@ fun SVPickUpLocationScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SearchResultsView(modifier: Modifier = Modifier, onSearchItemSelected: (item: String) -> Unit) {
-    val list = listOf("Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida")
+private fun SvPickUpLocationHeading(modifier: Modifier = Modifier, onEdit: () -> Unit) {
+    Column(
+        modifier
+            .padding(horizontal = 20.dp)
+    ) {
+        Text(
+            "Enter Pickup Location",
+            color = textColorDark,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+        )
+        Spacer(Modifier.height(3.dp))
+        Row {
+            Text(
+                "Sun 9 Feb  | 9:00 AM",
+                color = textColorLight,
+                fontSize = 14.sp,
+                lineHeight = 19.sp,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+            )
+            Spacer(Modifier.width(6.dp))
+            Box(Modifier.noRippleClick { onEdit() }) {
+                Text(
+                    "Edit",
+                    modifier = Modifier.noRippleClick { },
+                    color = mbRed,
+                    textDecoration = TextDecoration.Underline,
+                    fontSize = 14.sp,
+                    lineHeight = 19.sp,
+                    fontFamily = getFontFamily(
+                        Constants
+                            .MONTSERRAT_REGULAR
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SvSearchBox(modifier: Modifier = Modifier, textValue: String, onValueChange: (String)->Unit) {
+    OutlinedTextField(
+        value = textValue,
+        onValueChange,
+        textStyle = TextStyle(
+            fontSize = 14.sp,
+            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+            color = textColorLight
+        ),
+        modifier = modifier,
+        placeholder = {
+            Text(
+                "Enter Locality/Project/Landmark",
+                fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
+                fontSize = 14.sp,
+                color = textColorLight
+            )
+        },
+        trailingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+        shape = RoundedCornerShape(8.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White, unfocusedContainerColor = Color.White,
+            focusedBorderColor = Color(0xff909090), unfocusedBorderColor = Color(0xffd7d7d7)
+        )
+    )
+}
+
+@Composable
+private fun SvPickUpLocationNote(modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .background(color = Color(0xffFFF7E1), shape = RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(Icons.Outlined.Info, contentDescription = null, modifier = Modifier.size(10.dp))
+        Spacer(Modifier.width(4.dp))
+        Text(
+            "Share your exact location at the time of pickup",
+            fontSize = 12.sp,
+            lineHeight = 24.sp,
+            color = textColorDark,
+            fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+        )
+    }
+}
+
+@Composable
+private fun HandleSearchResults(modifier: Modifier = Modifier,viewModel: SiteVisitFlowViewModel, onSearchItemSelected: (item: String) -> Unit) {
+    val searchResults by viewModel.svLocationSearch.collectAsState()
+    if (!searchResults.isIdle){
+        when(val response = searchResults.apiState) {
+            is MBCoreResultEvent.OnFailure -> {}
+            MBCoreResultEvent.OnLoading -> {}
+            is MBCoreResultEvent.OnSuccess -> {
+                SearchResultsView(modifier = modifier, data = response.data, onSearchItemSelected = onSearchItemSelected)
+            }
+            null -> {}
+        }
+    }
+}
+
+@Composable
+private fun SearchResultsView(modifier: Modifier = Modifier, data:List<String>, onSearchItemSelected: (item: String) -> Unit) {
     LazyColumn(
         modifier = modifier
-            .heightIn(max = 300.dp)
+            .heightIn(max = 200.dp)
             .border(width = 1.dp, color = Color(0xffd7d7d7), shape = RoundedCornerShape(8.dp))
             .background(color = Color.White, shape = RoundedCornerShape(8.dp))
             .padding(start = 16.dp, end = 11.dp),
         contentPadding = PaddingValues(bottom = 10.dp)
     ) {
-        itemsIndexed(list) { index, item ->
+        itemsIndexed(data) { index, item ->
             Column(Modifier
                 .fillMaxWidth()
                 .noRippleClick { onSearchItemSelected(item) }
                 .padding(top = 16.dp, bottom = 15.dp)) {
                 Text(item, fontSize = 14.sp, color = textColorLight, fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR))
             }
-            if (index < list.size - 1) {
+            if (index < data.size - 1) {
                 HorizontalDivider(Modifier.fillMaxWidth(), thickness = 1.dp, color = Color(0xffdcdcdc))
             }
         }

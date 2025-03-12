@@ -4,10 +4,10 @@ import androidx.annotation.Keep
 
 @Keep
 data class SiteVisitFlowData(
-    val date: String,
-    val time: String,
-    val projects: List<SvProjectItem>,
-    val pickUpLocation: String
+    val date: String?=null,
+    val time: String?=null,
+    val projects: List<SvProjectItem>?=null,
+    val pickUpLocation: String?=null
 ){
     @Keep
     data class SvProjectItem(
