@@ -37,7 +37,7 @@ enum class SiteVisitScreens {
 
 class SiteVisitFlowActivity : ComponentActivity() {
 
-    private var startDestination = SiteVisitScreens.SvDateTimeSelection.name
+    private var startDestination = SiteVisitScreens.SVPickUpLocation.name
     private val viewModel: SiteVisitFlowViewModel by viewModels { SiteVisitFlowViewModel.Factory }
 
     companion object {
