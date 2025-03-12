@@ -1,7 +1,6 @@
 package com.rajotiya.mytestapp.sitevisit_flow.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
-import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
 import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SiteVisitFlowData
 import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SvSavedResponse
+import com.rajotiya.mytestapp.sitevisit_flow.ui.common_views.SvCommonProjectItemView
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.getFontFamily
 
@@ -118,47 +117,16 @@ private fun ProjectDetails(modifier: Modifier = Modifier, projects: List<SiteVis
                 color = textColorLight,
                 fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
             )
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 2.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 projects.forEach { projectItem ->
-                    ProjectItem(
+                    SvCommonProjectItemView(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp), projectItem
+                            .fillMaxWidth(), projectItem, backgroundColor = Color(0xfff5f5f5)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ProjectItem(modifier: Modifier = Modifier, projectItem: SiteVisitFlowData.SvProjectItem) {
-    Column(
-        modifier = modifier
-            .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(8.dp))
-            .background(color = Color(0xfff5f5f5), shape = RoundedCornerShape(6.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-    ) {
-        Text(
-            "${projectItem.prjName}, ${projectItem.prjCity}",
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            color = textColorDark,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-        )
-        Text(
-            "₹${projectItem.price}   |   ${projectItem.propType}   |   ${projectItem.area}",
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            color = textColorExtraLight,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-        )
-        Text(
-            "Possession by ${projectItem.possessionBy}",
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            color = textColorExtraLight,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-        )
     }
 }

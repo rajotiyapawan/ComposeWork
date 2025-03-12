@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.sp
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorDark
-import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorLight
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowActivity
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitFlowViewModel
 import com.rajotiya.mytestapp.sitevisit_flow.SiteVisitScreens
 import com.rajotiya.mytestapp.sitevisit_flow.SvFlowUserEvents
 import com.rajotiya.mytestapp.sitevisit_flow.domain.models.SiteVisitFlowData
+import com.rajotiya.mytestapp.sitevisit_flow.ui.common_views.SvCommonProjectItemView
 import com.rajotiya.mytestapp.sitevisit_flow.ui.common_views.SvCommonTopBar
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.LoaderUI
@@ -191,39 +191,7 @@ private fun ProjectsSelectedView(modifier: Modifier = Modifier, projects: List<S
             )
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 projects.forEach { projectItem ->
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .border(width = 1.dp, color = Color(0xffe8e8e8), shape = RoundedCornerShape(6.dp))
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            "${projectItem.prjName}, ${projectItem.prjCity}",
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
-                            color = textColorDark,
-                            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-                        )
-                        Text(
-                            "₹${projectItem.price}   |   ${projectItem.propType}   |   ${projectItem.area}",
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
-                            color = textColorExtraLight,
-                            fontFamily =
-                            getFontFamily
-                                (
-                                Constants
-                                    .MONTSERRAT_MEDIUM
-                            )
-                        )
-                        Text(
-                            "Possession by ${projectItem.possessionBy}",
-                            fontSize = 12.sp,
-                            lineHeight = 18.sp,
-                            color = textColorExtraLight,
-                            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM)
-                        )
-                    }
+                    SvCommonProjectItemView(modifier=Modifier.fillMaxWidth(), projectItem = projectItem)
                 }
             }
         }
