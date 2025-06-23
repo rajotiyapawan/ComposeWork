@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,7 +26,7 @@ import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rajotiya.mytestapp.random.LoyaltyContactStreakScreens
 import com.rajotiya.mytestapp.ui.theme.MyTestAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,19 +51,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyTestAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    RatingCardUI()
+                Scaffold { padding ->
+                    Surface(
+                        modifier = Modifier
+                            .padding(padding), color = Color.White
+                    ) {
+                        LoyaltyContactStreakScreens(modifier = Modifier.fillMaxWidth())
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!", modifier = modifier
-    )
 }
 
 @Composable
@@ -98,7 +96,9 @@ private fun ChatOurExpert() {
                         .padding(start = 16.dp), verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.mb_prime_call_white), contentDescription = null, colorFilter = ColorFilter.tint(color = Color(0xff009681))
+                        painter = painterResource(id = R.drawable.mb_prime_call_white),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(color = Color(0xff009681))
                     )
                     Text(
                         text = "7303439363",

@@ -70,7 +70,7 @@ fun SvCommonProjectItemView(modifier: Modifier = Modifier, projectItem: SiteVisi
             )
         )
         Text(
-            "Possession by ${projectItem.possessionBy}",
+            "Possession by ${projectItem.possStatusD}",
             fontSize = 12.sp,
             lineHeight = 18.sp,
             color = textColorExtraLight,

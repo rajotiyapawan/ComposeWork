@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'com.rajotiya.mytestapp'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.rajotiya.mytestapp"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -58,6 +58,8 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
     implementation 'io.coil-kt:coil-compose:2.4.0'
+    implementation("io.coil-kt:coil-gif:2.4.0")
+    implementation "com.airbnb.android:lottie-compose:6.1.0"
     implementation 'androidx.navigation:navigation-compose:2.8.5'
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation 'com.google.code.gson:gson:2.8.9'
@@ -66,6 +68,8 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer:1.1.0"
     implementation "androidx.media3:media3-ui:1.1.0"
     implementation "androidx.media3:media3-common:1.1.0"
+    implementation "androidx.compose.ui:ui-text-google-fonts:1.8.1"
+
 
 
 

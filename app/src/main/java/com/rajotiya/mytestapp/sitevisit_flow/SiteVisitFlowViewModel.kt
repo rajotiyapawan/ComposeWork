@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 /**
  * Created by Pawan Rajotiya on 06-03-2025.
  */
-class SiteVisitFlowViewModel: ViewModel() {
+class SiteVisitFlowViewModel : ViewModel() {
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -41,6 +41,7 @@ class SiteVisitFlowViewModel: ViewModel() {
     private val _userEvents = MutableLiveData<SvFlowUserEvents?>()
     val userEvents: LiveData<SvFlowUserEvents?>
         get() = _userEvents
+
     fun sendUserEvent(events: SvFlowUserEvents) {
         _userEvents.value = events
     }
@@ -52,29 +53,34 @@ class SiteVisitFlowViewModel: ViewModel() {
         }
     }
 
-    fun getFreeCabIntroData(){
+    fun getFreeCabIntroData() {
 
     }
 
-    private var _svLocationSearch = MutableStateFlow<ComposeUIState<MBCoreResultEvent<List<String>>>>(ComposeUIState(isIdle = true))
+    private var _svLocationSearch =
+        MutableStateFlow<ComposeUIState<MBCoreResultEvent<List<String>>>>(ComposeUIState(isIdle = true))
     val svLocationSearch = _svLocationSearch.asStateFlow()
 
-    fun getLocationSearchResults(query: String){
+    fun getLocationSearchResults(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (query.isEmpty() || query.length<3) {
+            if (query.isEmpty() || query.length < 3) {
                 _svLocationSearch.value = ComposeUIState(isIdle = true)
             } else {
                 _svLocationSearch.value = ComposeUIState(MBCoreResultEvent.OnLoading)
                 delay(400)
-                _svLocationSearch.value = ComposeUIState(MBCoreResultEvent.OnSuccess(listOf(
-                    "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida",
-                    "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida"
-                )))
+                _svLocationSearch.value = ComposeUIState(
+                    MBCoreResultEvent.OnSuccess(
+                        listOf(
+                            "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida",
+                            "Kailash Hospital, Sec 27, Noida", "Kailash Colony, Sec 127, Noida", "Kaily Town, Sec 27, Noida"
+                        )
+                    )
+                )
             }
         }
     }
 
-    fun savePickUpLocation(location:String){
+    fun savePickUpLocation(location: String) {
         _svFlowData.update { current ->
             current.copy(pickUpLocation = location)
         }
@@ -82,11 +88,13 @@ class SiteVisitFlowViewModel: ViewModel() {
         addDummyProjects()
     }
 
-    private fun addDummyProjects(){
+    private fun addDummyProjects() {
         _svFlowData.update { current ->
-            current.copy(projects = listOf(
-                getDummyProjectItem(), getDummyProjectItem()
-            ))
+            current.copy(
+                projects = listOf(
+                    getDummyProjectItem(), getDummyProjectItem()
+                )
+            )
         }
     }
 
@@ -95,13 +103,14 @@ class SiteVisitFlowViewModel: ViewModel() {
             prjName = "Mb Project 1",
             prjCity = "Noida",
             price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
-            possessionBy = "Dec'25"
+            possStatusD = "Dec'25"
         )
     }
 
-    private var _saveSvBooking = MutableStateFlow<ComposeUIState<MBCoreResultEvent<SvSavedResponse>>>(ComposeUIState(isIdle = true))
+    private var _saveSvBooking =
+        MutableStateFlow<ComposeUIState<MBCoreResultEvent<SvSavedResponse>>>(ComposeUIState(isIdle = true))
     val saveSvBooking = _saveSvBooking.asStateFlow()
-    fun saveSvBooking(){
+    fun saveSvBooking() {
         viewModelScope.launch(Dispatchers.IO) {
             _saveSvBooking.value = ComposeUIState(MBCoreResultEvent.OnLoading)
             delay(500)
@@ -109,7 +118,7 @@ class SiteVisitFlowViewModel: ViewModel() {
         }
     }
 
-    private fun getSvSavedResponseDummy(): SvSavedResponse{
+    private fun getSvSavedResponseDummy(): SvSavedResponse {
         return SvSavedResponse(
             status = "1", message = "Booked Successfully",
             date = "9 Mar", time = "10:00 PM",
@@ -119,13 +128,13 @@ class SiteVisitFlowViewModel: ViewModel() {
                         prjName = "Mb Project 1",
                         prjCity = "Noida",
                         price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
-                        possessionBy = "Dec'25"
+                        possStatusD = "Dec'25"
                     ),
                     SiteVisitFlowData.SvProjectItem(
                         prjName = "Mb Project 1",
                         prjCity = "Noida",
                         price = "2.01Cr", propType = "2BHK", area = "1890 sqft",
-                        possessionBy = "Dec'25"
+                        possStatusD = "Dec'25"
                     )
                 ),
                 date = "9 Mar", time = "10:00 PM", pickUpLocation = "Kailash Hospital, Sec 27, Noida"
@@ -133,7 +142,11 @@ class SiteVisitFlowViewModel: ViewModel() {
             cabDetails = SvSavedResponse.SvCabDetails(
                 cabNumber = "HRXX XXXX12", cabModel = "White Etios Diesel",
                 driverName = "Driver Singh", driverRating = "4.5",
-                thingsToRemember = listOf("It's absolutely Free - no hidden charges!","You can visit multiple projects in one trip","Keep the cab & driver for your entire trip"),
+                thingsToRemember = listOf(
+                    "It's absolutely Free - no hidden charges!",
+                    "You can visit multiple projects in one trip",
+                    "Keep the cab & driver for your entire trip"
+                ),
                 note = "We will call you 30 mins before pickup to confirm your exact location"
             ),
             trackMsg = "You can track & edit your site visit bookings only on the App!"
@@ -146,7 +159,8 @@ class SiteVisitFlowViewModel: ViewModel() {
 
     var tabTitles = listOf("Morning", "Afternoon", "Evening")
     val timeSlots = listOf(
-        listOf( // Morning Slots
+        listOf(
+            // Morning Slots
             TimeSlot("9:00 AM", 1),
             TimeSlot("9:30 AM", 2),
             TimeSlot("10:00 AM", 3),
@@ -154,14 +168,16 @@ class SiteVisitFlowViewModel: ViewModel() {
             TimeSlot("11:00 AM", 5),
             TimeSlot("11:30 AM", 6),
         ),
-        listOf( // Afternoon Slots
+        listOf(
+            // Afternoon Slots
             TimeSlot("12:00 PM", 7),
             TimeSlot("12:30 PM", 8),
             TimeSlot("1:00 PM", 9),
             TimeSlot("1:30 PM", 10),
             TimeSlot("2:00 PM", 11),
         ),
-        listOf( // Evening Slots
+        listOf(
+            // Evening Slots
             TimeSlot("5:00 PM", 12),
             TimeSlot("5:30 PM", 13),
             TimeSlot("6:00 PM", 14),

@@ -1,6 +1,7 @@
 package com.rajotiya.mytestapp.sitevisit_flow.domain.models
 
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class SiteVisitFlowData(
@@ -11,11 +12,21 @@ data class SiteVisitFlowData(
 ){
     @Keep
     data class SvProjectItem(
-        val prjName:String,
-        val prjCity: String,
-        val price: String,
-        val propType: String,
-        val area: String,
-        val possessionBy: String
+        @SerializedName("psmname")val prjName: String?,
+        @SerializedName("ctname")val prjCity: String?,
+        @SerializedName("prc", alternate = ["price"])val price: String?,
+        val propType: String?,
+        val area: String?,
+        val possStatusD: String?,
+        val bd: String?=null,
+        val cg: String?=null,
+        val psmid: String?=null,
+        val lt: String?=null,
+        val dist: String?=null,
+        val pid: String?=null,
+        val imgUrl: String?=null,
+        val ct: String?=null,
+        var isSelected: Boolean=false,
+        @SerializedName("ltname")val ltName: String?=null,
     )
 }

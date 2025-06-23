@@ -10,6 +10,9 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.core.content.res.ResourcesCompat
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -54,8 +57,23 @@ fun getFont(font: String): Typeface {
 }
 
 fun getFontFamily(font: String): FontFamily {
-    return FontFamily(getFont(font))
+    val weight = when(font){
+        Constants.MONTSERRAT -> FontWeight.Normal
+        Constants.MONTSERRAT_REGULAR -> FontWeight.Normal
+        Constants.MONTSERRAT_MEDIUM -> FontWeight.Medium
+        Constants.MONTSERRAT_SEMIBOLD -> FontWeight.SemiBold
+        Constants.MONTSERRAT_BOLD -> FontWeight.Bold
+        else -> {FontWeight.Normal}
+    }
+    val fontName = GoogleFont("Montserrat")
+    return FontFamily(Font(googleFont = fontName, fontProvider = provider, weight))
 }
+
+val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
+)
 
 @Composable
 fun getComposeImageFromUrl(url: String?): AsyncImagePainter {

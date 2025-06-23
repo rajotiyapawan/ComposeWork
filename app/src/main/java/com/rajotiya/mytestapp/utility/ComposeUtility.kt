@@ -16,9 +16,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -42,10 +49,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
+import coil.decode.GifDecoder
+import coil.request.ImageRequest
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.loyalty.models.TextModel
 import androidx.compose.ui.graphics.Color as ComposeColor
@@ -210,7 +221,7 @@ fun BottomPopupDialog(
                     enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(400)),
                     exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(400))
                 ) {
-                    Column {
+                    Column(Modifier.height(IntrinsicSize.Min)) {
                         if (showCross) {
                             Box(
                                 modifier = Modifier
@@ -229,12 +240,10 @@ fun BottomPopupDialog(
                                             Alignment.CenterEnd
                                         )
                                 )
-                            }
-                            Spacer(modifier = Modifier.height(16.dp)) // Space between cross and content
+                            }// Space between cross and content
                         }
                         Column(
                             modifier = modifier
-                                .weight(1f, false)
                                 .noRippleClick {  }
                         ) {
                             content()
@@ -244,6 +253,48 @@ fun BottomPopupDialog(
             }
         }
     }
+}
+
+@Composable
+fun DottedBorderBox(
+    modifier: Modifier = Modifier,
+    borderColor: ComposeColor = ComposeColor.Gray,
+    borderWidth: Dp = 1.dp,
+    dotSpacing: Dp = 4.dp,
+    cornerRadius: Dp = 8.dp,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier
+            .drawBehind {
+                val stroke = Stroke(
+                    width = borderWidth.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(
+                        floatArrayOf(borderWidth.toPx(), dotSpacing.toPx()), 0f
+                    )
+                )
+                drawRoundRect(
+                    color = borderColor,
+                    style = stroke,
+                    size = Size(size.width, size.height),
+                    cornerRadius = CornerRadius(cornerRadius.toPx())
+                )
+            }
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun GifAsyncImage(modifier: Modifier = Modifier, id: Int) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(id) // or URL/resource
+            .decoderFactory(GifDecoder.Factory())
+            .build(), // Replace with your GIF resource name
+        contentDescription = "Animated GIF",
+        modifier = modifier
+    )
 }
 
 
