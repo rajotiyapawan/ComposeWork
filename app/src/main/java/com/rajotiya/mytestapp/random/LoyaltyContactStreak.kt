@@ -1,6 +1,8 @@
 package com.rajotiya.mytestapp.random
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,6 +47,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
@@ -69,6 +74,7 @@ import com.rajotiya.mytestapp.utility.DottedBorderBox
 import com.rajotiya.mytestapp.utility.GifAsyncImage
 import com.rajotiya.mytestapp.utility.getFontFamily
 import com.rajotiya.mytestapp.utility.noRippleClick
+import kotlinx.coroutines.delay
 
 /**
  * Created by Pawan Rajotiya on 17-06-2025.
@@ -82,7 +88,7 @@ import com.rajotiya.mytestapp.utility.noRippleClick
 
 @Composable
 fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
-    val (screenInt, onChange) = remember { mutableIntStateOf(0) }
+    val (screenInt, onChange) = remember { mutableIntStateOf(5) }
     BottomPopupDialog(modifier = Modifier.fillMaxWidth(), showDialog = true, onDismiss = {}, showCross = false) {
         when (screenInt) {
             0 -> {
@@ -90,15 +96,24 @@ fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
             }
 
             1 -> {
-                LoyaltyContactStartBanner(modifier = modifier) { onChange(2) }
+                Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                    LoyaltyContactStartBanner(modifier = modifier, isPrime = true) { onChange(2) }
+                    LoyaltyContactStartBanner(modifier = modifier, isPrime = false) { onChange(2) }
+                }
             }
 
             2 -> {
-                LoyaltyContactEndBanner(modifier = modifier) { onChange(3) }
+                Column {
+                    LoyaltyContactEndBanner(modifier = modifier, isPrime = true) { onChange(3) }
+                    LoyaltyContactEndBanner(modifier = modifier, isPrime = false) { onChange(3) }
+                }
             }
 
             3 -> {
-                LoyaltyContactReset1Banner(modifier = modifier) { onChange(4) }
+                Column {
+                    LoyaltyContactReset1Banner(modifier = modifier,true) { onChange(4) }
+                    LoyaltyContactReset1Banner(modifier = modifier,false) { onChange(4) }
+                }
             }
 
             4 -> {
@@ -110,7 +125,10 @@ fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
             }
 
             5 -> {
-                LoyaltyContactReset2Banner(modifier = modifier) { onChange(6) }
+                Column {
+                    LoyaltyContactReset2Banner(modifier = modifier,true) { onChange(6) }
+                    LoyaltyContactReset2Banner(modifier = modifier,false) { onChange(6) }
+                }
             }
 
             6 -> {
@@ -129,7 +147,7 @@ fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, onClose: () -> Unit) {
+fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, isPrime: Boolean, onClose: () -> Unit) {
     Column(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
@@ -149,7 +167,7 @@ fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, onClose: () -> Unit
                 .fillMaxWidth()
                 .background(color = Color.White, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .padding(top = 16.dp, bottom = 9.dp, end = 4.dp, start = 16.dp),
-            horizontalArrangement = Arrangement.Start
+            horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically
         ) {
             Image(painter = painterResource(R.drawable.kepp_going_text), contentDescription = null)
             Spacer(Modifier.width(4.dp))
@@ -161,48 +179,51 @@ fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, onClose: () -> Unit
                 color = textColorLight
             )
         }
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                    append("5 more days")
-                }
-                append(" to unlock ")
-                appendInlineContent("mbCrown")
-                append(" MB Prime")
-            },
-            inlineContent = mapOf(
-                "mbCrown" to InlineTextContent(
-                    placeholder = Placeholder(
-                        width = 17.sp,
-                        height = 20.sp,
-                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-                    )
-                ) {
-                    Box(
-                        Modifier
-                            .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                            .padding(3.dp)
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+        if (isPrime) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                        append("5 more days")
                     }
-                }
-            ),
-            fontSize = 12.sp,
-            lineHeight = 20.sp,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
-            color = textColorLight,
-            modifier = Modifier.padding(top = 5.dp, start = 14.dp)
-        )
+                    append(" to unlock ")
+                    appendInlineContent("mbCrown")
+                    append(" MB Prime")
+                },
+                inlineContent = mapOf(
+                    "mbCrown" to InlineTextContent(
+                        placeholder = Placeholder(
+                            width = 17.sp,
+                            height = 20.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.Top
+                        )
+                    ) {
+                        Box(
+                            Modifier
+                                .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                                .padding(3.dp)
+                        ) {
+                            Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+                        }
+                    }
+                ),
+                fontSize = 12.sp,
+                lineHeight = 20.sp,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
+                color = textColorLight,
+                modifier = Modifier.padding(top = 5.dp, start = 14.dp)
+            )
+        }
         Box(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp)
         ) {
-            StreakBarPrime(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2
-            )
+            if (isPrime) {
+                StreakBarPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2
+                )
             Text(
                 "MB Prime",
                 fontSize = 6.sp,
@@ -214,7 +235,23 @@ fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, onClose: () -> Unit
                     .padding(end = 12.dp)
                     .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                     .padding(horizontal = 2.dp, vertical = 1.dp)
-            )
+            )} else {
+                StreakBarNonPrime( modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 2, showStarSeven = true)
+                Text(
+                    "+50 Points",
+                    fontSize = 8.sp, lineHeight = 9.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 10.dp)
+                        .border(width = 1.dp, color = Color(0xffeb860d), shape = RoundedCornerShape(50))
+                        .background(color = Color.White, shape = RoundedCornerShape(50))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -269,7 +306,7 @@ fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, onClose: () -> Unit
 }
 
 @Composable
-fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, onClose: () -> Unit) {
+fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, isPrime: Boolean, onClose: () -> Unit) {
     Column(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
@@ -289,7 +326,7 @@ fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, onClose: () -> Unit) 
                 .fillMaxWidth()
                 .background(color = Color.White, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .padding(top = 16.dp, bottom = 9.dp, end = 4.dp, start = 16.dp),
-            horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.Top
         ) {
             Image(painter = painterResource(R.drawable.great_text), contentDescription = null)
             Spacer(Modifier.width(4.dp))
@@ -307,66 +344,74 @@ fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, onClose: () -> Unit) 
                 color = textColorLight
             )
         }
-        Text(
-            buildAnnotatedString {
-                withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                    append("5 more days")
-                }
-                append(" to unlock ")
-                appendInlineContent("mbCrown")
-                append(" MB Prime")
-            },
-            inlineContent = mapOf(
-                "mbCrown" to InlineTextContent(
-                    placeholder = Placeholder(
-                        width = 17.sp,
-                        height = 20.sp,
-                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-                    )
-                ) {
-                    Box(
-                        Modifier
-                            .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                            .padding(3.dp)
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+        if(isPrime) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                        append("5 more days")
                     }
-                }
-            ),
-            fontSize = 12.sp,
-            lineHeight = 20.sp,
-            fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
-            color = textColorLight,
-            modifier = Modifier.padding(top = 5.dp, start = 14.dp)
-        )
+                    append(" to unlock ")
+                    appendInlineContent("mbCrown")
+                    append(" MB Prime")
+                },
+                inlineContent = mapOf(
+                    "mbCrown" to InlineTextContent(
+                        placeholder = Placeholder(
+                            width = 17.sp,
+                            height = 20.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.Top
+                        )
+                    ) {
+                        Box(
+                            Modifier
+                                .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                                .padding(3.dp)
+                        ) {
+                            Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+                        }
+                    }
+                ),
+                fontSize = 12.sp,
+                lineHeight = 20.sp,
+                fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
+                color = textColorLight,
+                modifier = Modifier.padding(top = 5.dp, start = 14.dp)
+            )
+        }
         Box(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp)
         ) {
-            StreakBarPrime(
-                modifier = Modifier
+            if (isPrime) {
+                StreakBarPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2
+                )
+                Text(
+                    "MB Prime",
+                    fontSize = 6.sp,
+                    lineHeight = 7.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 12.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            }else {
+                StreakBarNonPrime( modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2
-            )
-            Text(
-                "MB Prime",
-                fontSize = 6.sp,
-                lineHeight = 7.sp,
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                color = textColorDark,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 12.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 2.dp, vertical = 1.dp)
-            )
+                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 2, showStarSeven = true)
+            }
         }
     }
 }
 
 @Composable
-fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier, onClose: () -> Unit) {
+fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier,isPrime: Boolean, onClose: () -> Unit) {
     Column(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
@@ -413,23 +458,41 @@ fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier, onClose: () -> Uni
                 .fillMaxWidth()
                 .padding(top = 4.dp)
         ) {
-            StreakBarPrime(
-                modifier = Modifier
+            if (isPrime) {
+                StreakBarPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 0
+                )
+                Text(
+                    "MB Prime",
+                    fontSize = 6.sp,
+                    lineHeight = 7.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 12.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            }else {
+                StreakBarNonPrime( modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 0
-            )
-            Text(
-                "MB Prime",
-                fontSize = 6.sp,
-                lineHeight = 7.sp,
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                color = textColorDark,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 12.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 2.dp, vertical = 1.dp)
-            )
+                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 0, showStarSeven = true)
+                Text(
+                    "+50 Points",
+                    fontSize = 8.sp, lineHeight = 9.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 10.dp)
+                        .border(width = 1.dp, color = Color(0xffeb860d), shape = RoundedCornerShape(50))
+                        .background(color = Color.White, shape = RoundedCornerShape(50))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -865,7 +928,29 @@ fun LoyaltyContactPrimeMegaEndBanner(modifier: Modifier = Modifier, onClose: () 
 }
 
 @Composable
-fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, onClose: () -> Unit) {
+fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, isPrime: Boolean, onClose: () -> Unit) {
+    var animateDone by remember { mutableStateOf(false) }
+    var reverseDays by remember { mutableStateOf(false) }
+    var resetDays by remember { mutableStateOf(4) }
+
+    // Animate scale of the first text
+    val scale by animateFloatAsState(
+        targetValue = if (animateDone) 0.7f else 1f,
+        animationSpec = tween(durationMillis = 600),
+        label = "scaleAnim"
+    )
+    // Trigger the animation once shown
+    LaunchedEffect(Unit) {
+        delay(100)
+        reverseDays = true
+        while(resetDays>0){
+            resetDays--
+            delay(300)
+        }
+        delay(400) // Optional delay before starting
+        animateDone = true
+    }
+
     Column(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
@@ -883,7 +968,12 @@ fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, onClose: () -> Uni
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, end = 4.dp, start = 16.dp),
+                .padding(top = 16.dp, end = 4.dp, start = 16.dp)
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    transformOrigin = TransformOrigin(0f, 0f)
+                ),
             horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically
         ) {
             Image(painter = painterResource(R.drawable.oops_pink_emoticon), contentDescription = null)
@@ -895,51 +985,83 @@ fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, onClose: () -> Uni
                 append(" you missed your reward!")
             }, fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM), fontSize = 16.sp, lineHeight = 20.sp)
         }
-        Text(
-            buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = Color(0xff009681),
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
-                    )
-                ) {
-                    append("Let's Restart!")
-                }
-                withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                    append(" Enquire")
-                }
-                append(" on properties ")
-                withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                    append("daily.")
-                }
-            },
-            fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            modifier = Modifier.padding(start = 16.dp)
-        )
+        AnimatedVisibility(
+            visible = animateDone,
+            enter = fadeIn(animationSpec = tween(600))
+        ) {
+            Text(
+                buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xff009681),
+                            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD)
+                        )
+                    ) {
+                        append("Let's Restart!")
+                    }
+                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                        append(" Enquire")
+                    }
+                    append(" on properties ")
+                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                        append("daily.")
+                    }
+                },
+                fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
         Box(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp)
         ) {
-            ResetStreakBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp), resetDays = 4
-            )
-            Text(
-                "MB Prime",
-                fontSize = 6.sp,
-                lineHeight = 7.sp,
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                color = textColorDark,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 12.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 2.dp, vertical = 1.dp)
-            )
+            if (!reverseDays) {
+                ResetStreakBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), isPrime = isPrime, resetDays = resetDays
+                )
+            } else {
+                if (isPrime) {
+                    StreakBarPrime(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), resetDays)
+                } else {
+                    StreakBarNonPrime(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp),resetDays)
+                }
+            }
+            if (isPrime) {
+                Text(
+                    "MB Prime",
+                    fontSize = 6.sp,
+                    lineHeight = 7.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 12.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            } else {
+                Text(
+                    "+50 Points",
+                    fontSize = 8.sp, lineHeight = 9.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 10.dp)
+                        .border(width = 1.dp, color = Color(0xffeb860d), shape = RoundedCornerShape(50))
+                        .background(color = Color.White, shape = RoundedCornerShape(50))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -1245,7 +1367,10 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
                 LottieAnimation(
                     composition = outsideAnimSpec.value,
                     progress = { outsideAnimProgress },
-                    modifier = Modifier.fillMaxWidth().height(200.dp).align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .align(Alignment.BottomCenter)
                 )
             }
         }
@@ -1676,7 +1801,7 @@ private fun StreakBarNonPrime(modifier: Modifier = Modifier, daysDone: Int, show
 }
 
 @Composable
-private fun ResetStreakBar(modifier: Modifier = Modifier, resetDays: Int) {
+private fun ResetStreakBar(modifier: Modifier = Modifier, isPrime: Boolean=true,resetDays: Int) {
     Box(modifier, contentAlignment = Alignment.Center) {
         Row(
             Modifier
@@ -1745,14 +1870,28 @@ private fun ResetStreakBar(modifier: Modifier = Modifier, resetDays: Int) {
                             shape = RoundedCornerShape(50)
                         )
                 )
-                Box(
-                    Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+                if (isPrime) {
+                    Box(
+                        Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+                    }
+                } else {
+                    Box(
+                        Modifier
+                            .size(28.dp)
+                            .clip(CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.contact_streak_point7),
+                            contentDescription = null, contentScale = ContentScale.FillWidth, modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
             }
         }
