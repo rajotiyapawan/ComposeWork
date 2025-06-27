@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rajotiya.mytestapp.playground.AnimationsTests
 import com.rajotiya.mytestapp.playground.SurfaceUseCases
 import com.rajotiya.mytestapp.playground.TaskListScreen
 import com.rajotiya.mytestapp.random.LoyaltyContactStreakScreens
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
             MyTestAppTheme {
                 // A surface container using the 'background' color from the theme
                 Scaffold { padding ->
-                    TaskListScreen(Modifier.padding(padding))
+                    AnimationsTests(Modifier.padding(padding))
                 }
             }
         }
