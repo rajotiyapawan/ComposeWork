@@ -1,9 +1,13 @@
 package com.rajotiya.mytestapp.random
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -20,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
@@ -88,11 +93,19 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
-    val (screenInt, onChange) = remember { mutableIntStateOf(5) }
+    val (screenInt, onChange) = remember { mutableIntStateOf(0) }
+    LaunchedEffect(screenInt) {
+        if (screenInt!=0) {
+            delay(2000)
+            onChange(0)
+        }
+    }
     BottomPopupDialog(modifier = Modifier.fillMaxWidth(), showDialog = true, onDismiss = {}, showCross = false) {
         when (screenInt) {
             0 -> {
-                LoyaltyContactStreakPrimeIntro(modifier = modifier) { onChange(1) }
+                LoyaltyContactStreakPrimeIntro(modifier = modifier) {
+                    onChange(1)
+                }
             }
 
             1 -> {
@@ -1170,87 +1183,110 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
             .fillMaxWidth()) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 MegaIntroTitle(modifier = Modifier.fillMaxWidth(fraction = 0.7f))
-                if (!showBoxContent) {
-                    LottieAnimation(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        composition = boxAnimSpec.value,
-                        progress = { boxAnimProgress }
-                    )
-                } else {
-                    PrimeRewardDetailWithBg(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                    )
+                ScaledImage(showBoxContent)
+                Box {
+                    if (!showBoxContent) {
+                        LottieAnimation(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            composition = boxAnimSpec.value,
+                            progress = { boxAnimProgress }
+                        )
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = showBoxContent,
+                        enter = scaleIn(
+                            initialScale = 0.4f,
+                            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+                        ) + fadeIn(animationSpec = tween(300)),
+                        exit = fadeOut()
+                    ) {
+                        Column {
+                            PrimeRewardDetailWithBg(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp)
+                            )
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp)
+                                    .padding(horizontal = 30.dp), contentAlignment = Alignment.TopCenter
+                            ) {
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 12.dp)
+                                        .border(
+                                            width = 1.dp,
+                                            brush = Brush.verticalGradient(colors = listOf(Color(0x66ffc72c), Color(0xffbf568c))),
+                                            shape = RoundedCornerShape(50)
+                                        )
+                                        .padding(top = 12.dp, bottom = 10.dp, start = 6.dp, end = 6.dp)
+                                ) {
+                                    Text(buildAnnotatedString {
+                                        append("Get access to ")
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                brush = Brush.linearGradient(colors = listOf(Color(0xffffc72c), mbRed))
+                                            )
+                                        ) {
+                                            append("Exclusive Owner Properties")
+                                        }
+                                    }, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                                }
+                                Text(
+                                    buildAnnotatedString {
+                                        append("worth ")
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                color = mbRed
+                                            )
+                                        ) {
+                                            append("₹1,899")
+                                        }
+                                        append(" for ")
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                color = Color(0xff009681)
+                                            )
+                                        ) {
+                                            append("FREE")
+                                        }
+                                    },
+                                    fontSize = 12.sp,
+                                    color = Color.Black,
+                                    fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                                    modifier = Modifier
+                                        .background(color = Color(0xfffdf9ec).copy(alpha = 0.9f))
+                                        .padding(horizontal = 12.dp)
+                                )
+                            }
+                        }
+                    }
                 }
+                Spacer(Modifier.height(20.dp))
+                AnimatedVisibility(
+                    visible = showSlideUpContent,
+                    enter = slideInVertically(
+                        initialOffsetY = { it }, // full slide from below
+                        animationSpec = tween(700, easing = FastOutSlowInEasing)
+                    ) + fadeIn(
+                        animationSpec = tween(300)
+                    ),
+                ){
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp)
-                        .padding(horizontal = 30.dp), contentAlignment = Alignment.TopCenter
-                ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                            .border(
-                                width = 1.dp,
-                                brush = Brush.verticalGradient(colors = listOf(Color(0x66ffc72c), Color(0xffbf568c))),
-                                shape = RoundedCornerShape(50)
-                            )
-                            .padding(top = 12.dp, bottom = 10.dp, start = 6.dp, end = 6.dp)
-                    ) {
-                        Text(buildAnnotatedString {
-                            append("Get access to ")
-                            withStyle(
-                                style = SpanStyle(
-                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                    brush = Brush.linearGradient(colors = listOf(Color(0xffffc72c), mbRed))
-                                )
-                            ) {
-                                append("Exclusive Owner Properties")
-                            }
-                        }, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                    }
-                    Text(
-                        buildAnnotatedString {
-                            append("worth ")
-                            withStyle(
-                                style = SpanStyle(
-                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                    color = mbRed
-                                )
-                            ) {
-                                append("₹1,899")
-                            }
-                            append(" for ")
-                            withStyle(
-                                style = SpanStyle(
-                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                    color = Color(0xff009681)
-                                )
-                            ) {
-                                append("FREE")
-                            }
-                        },
-                        fontSize = 12.sp,
-                        color = Color.Black,
-                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
-                        modifier = Modifier
-                            .background(color = Color(0xfffdf9ec).copy(alpha = 0.9f))
-                            .padding(horizontal = 12.dp)
-                    )
-                }
-                AnimatedVisibility(
-                    visible = showSlideUpContent,
-                    enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
+                        .wrapContentHeight()
                 ) {
                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                         Canvas(
                             modifier = Modifier
-                                .padding(top = 20.dp)
                                 .width(90.dp)
                         ) {
                             val arrowWidth = 40
@@ -1363,6 +1399,7 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
                     }
                 }
             }
+            }
             if (showOutsideAnimation) {
                 LottieAnimation(
                     composition = outsideAnimSpec.value,
@@ -1376,6 +1413,24 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
         }
     }
 }
+
+@Composable
+private fun ScaledImage(shouldShrink: Boolean) {
+    val targetHeight = if (shouldShrink) 40.dp else 60.dp
+
+    val animatedHeight by animateDpAsState(
+        targetValue = targetHeight,
+        animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+        label = "ImageHeight"
+    )
+
+    Image(
+        painter = painterResource(R.drawable.get_rewarded_text),
+        contentDescription = null, contentScale = ContentScale.FillHeight,
+        modifier = Modifier.height(animatedHeight)
+    )
+}
+
 
 @Composable
 fun LoyaltyContactStreakNonPrimeIntro(modifier: Modifier = Modifier, onClose: () -> Unit) {
@@ -1554,11 +1609,6 @@ private fun PrimeRewardDetailWithBg(modifier: Modifier = Modifier) {
 //            modifier = Modifier.fillMaxWidth()
 //        )
         Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(R.drawable.get_rewarded_text),
-                contentDescription = null,
-                modifier = Modifier.height(40.dp)
-            )
             Spacer(Modifier.height(4.dp))
             Image(
                 painter = painterResource(R.drawable.ic_prime_crown),

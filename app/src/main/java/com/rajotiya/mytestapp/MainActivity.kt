@@ -27,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,9 +41,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rajotiya.mytestapp.playground.AnimationsTests
-import com.rajotiya.mytestapp.playground.SurfaceUseCases
-import com.rajotiya.mytestapp.playground.TaskListScreen
 import com.rajotiya.mytestapp.random.LoyaltyContactStreakScreens
 import com.rajotiya.mytestapp.ui.theme.MyTestAppTheme
 
@@ -55,7 +51,7 @@ class MainActivity : ComponentActivity() {
             MyTestAppTheme {
                 // A surface container using the 'background' color from the theme
                 Scaffold { padding ->
-                    AnimationsTests(Modifier.padding(padding))
+                    LoyaltyContactStreakScreens(Modifier.padding(padding))
                 }
             }
         }
