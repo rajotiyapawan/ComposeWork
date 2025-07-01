@@ -1,6 +1,7 @@
 package com.rajotiya.mytestapp.random
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -9,6 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -93,14 +95,14 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
-    val (screenInt, onChange) = remember { mutableIntStateOf(0) }
+    val (screenInt, onChange) = remember { mutableIntStateOf(4) }
     LaunchedEffect(screenInt) {
-        if (screenInt!=0) {
+        if (screenInt != 4) {
             delay(2000)
-            onChange(0)
+            onChange(4)
         }
     }
-    BottomPopupDialog(modifier = Modifier.fillMaxWidth(), showDialog = true, onDismiss = {}, showCross = false) {
+    BottomPopupDialog(modifier = modifier.fillMaxWidth(), showDialog = true, onDismiss = {}, showCross = false) {
         when (screenInt) {
             0 -> {
                 LoyaltyContactStreakPrimeIntro(modifier = modifier) {
@@ -124,23 +126,28 @@ fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
 
             3 -> {
                 Column {
-                    LoyaltyContactReset1Banner(modifier = modifier,true) { onChange(4) }
-                    LoyaltyContactReset1Banner(modifier = modifier,false) { onChange(4) }
+                    LoyaltyContactReset1Banner(modifier = modifier, true) { onChange(4) }
+                    LoyaltyContactReset1Banner(modifier = modifier, false) { onChange(4) }
                 }
             }
 
             4 -> {
-                Column {
-                    LoyaltyContactCongratsMBPrimeBanner(modifier = modifier) { onChange(5) }
-                    Spacer(Modifier.height(20.dp))
-                    LoyaltyContactCongratsNonPrimeBanner(modifier = modifier) { onChange(5) }
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 25.dp)
+                ) {
+                    AnimatedMegaEnd(modifier){}
+//                    LoyaltyContactCongratsMBPrimeBanner(modifier = modifier) { onChange(5) }
+//                    Spacer(Modifier.height(20.dp))
+//                    LoyaltyContactCongratsNonPrimeBanner(modifier = modifier) { onChange(5) }
                 }
             }
 
             5 -> {
                 Column {
-                    LoyaltyContactReset2Banner(modifier = modifier,true) { onChange(6) }
-                    LoyaltyContactReset2Banner(modifier = modifier,false) { onChange(6) }
+                    LoyaltyContactReset2Banner(modifier = modifier, true) { onChange(6) }
+                    LoyaltyContactReset2Banner(modifier = modifier, false) { onChange(6) }
                 }
             }
 
@@ -237,21 +244,24 @@ fun LoyaltyContactStartBanner(modifier: Modifier = Modifier, isPrime: Boolean, o
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2
                 )
-            Text(
-                "MB Prime",
-                fontSize = 6.sp,
-                lineHeight = 7.sp,
-                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                color = textColorDark,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 12.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
-                    .padding(horizontal = 2.dp, vertical = 1.dp)
-            )} else {
-                StreakBarNonPrime( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 2, showStarSeven = true)
+                Text(
+                    "MB Prime",
+                    fontSize = 6.sp,
+                    lineHeight = 7.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                    color = textColorDark,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 12.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 2.dp, vertical = 1.dp)
+                )
+            } else {
+                StreakBarNonPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2, showStarSeven = true
+                )
                 Text(
                     "+50 Points",
                     fontSize = 8.sp, lineHeight = 9.sp,
@@ -357,7 +367,7 @@ fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, isPrime: Boolean, onC
                 color = textColorLight
             )
         }
-        if(isPrime) {
+        if (isPrime) {
             Text(
                 buildAnnotatedString {
                     withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
@@ -414,17 +424,19 @@ fun LoyaltyContactEndBanner(modifier: Modifier = Modifier, isPrime: Boolean, onC
                         .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .padding(horizontal = 2.dp, vertical = 1.dp)
                 )
-            }else {
-                StreakBarNonPrime( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 2, showStarSeven = true)
+            } else {
+                StreakBarNonPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 2, showStarSeven = true
+                )
             }
         }
     }
 }
 
 @Composable
-fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier,isPrime: Boolean, onClose: () -> Unit) {
+fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier, isPrime: Boolean, onClose: () -> Unit) {
     Column(
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
@@ -489,10 +501,12 @@ fun LoyaltyContactReset1Banner(modifier: Modifier = Modifier,isPrime: Boolean, o
                         .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .padding(horizontal = 2.dp, vertical = 1.dp)
                 )
-            }else {
-                StreakBarNonPrime( modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 18.dp, top = 6.dp),daysDone = 0, showStarSeven = true)
+            } else {
+                StreakBarNonPrime(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 0, showStarSeven = true
+                )
                 Text(
                     "+50 Points",
                     fontSize = 8.sp, lineHeight = 9.sp,
@@ -683,6 +697,254 @@ fun LoyaltyContactCongratsMBPrimeBanner(modifier: Modifier = Modifier, onClose: 
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+fun AnimatedMegaEnd(modifier: Modifier = Modifier, onClose: () -> Unit) {
+    var showOutsideAnimation by remember { mutableStateOf(false) }
+    var showPrize by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(3000)
+        showPrize = true
+        delay(300)
+        showOutsideAnimation = true
+    }
+    val outsideAnimSpec = rememberLottieComposition(LottieCompositionSpec.Asset("desktop-confetti-blown-up.json"))
+    val outsideAnimProgress by animateLottieCompositionAsState(
+        composition = outsideAnimSpec.value,
+        iterations = 3,
+        speed = 1f,
+        isPlaying = showOutsideAnimation,
+    )
+    Box(
+        modifier = modifier
+            .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(colors = listOf(Color(0xffffde82), Color(0xff99854e))),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(
+                brush = Brush.linearGradient(colors = listOf(Color(0xfffffcf2), Color(0xfffff5cc))),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .animateContentSize(
+                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+            )
+    ) {
+        AnimatedVisibility(
+            visible = !showPrize,
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(500)
+            )+fadeOut()
+        ) {
+            Column(
+                modifier = modifier.padding(bottom = 7.dp)
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, end = 4.dp, start = 16.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Image(painter = painterResource(R.drawable.congratulations_text), contentDescription = null)
+                }
+                Text(
+                    buildAnnotatedString {
+                        append("You've unlocked ")
+                        appendInlineContent("mbCrown")
+                        append(" MB Prime")
+                    },
+                    inlineContent = mapOf(
+                        "mbCrown" to InlineTextContent(
+                            placeholder = Placeholder(
+                                width = 17.sp,
+                                height = 20.sp,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.Top
+                            )
+                        ) {
+                            Box(
+                                Modifier
+                                    .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                                    .padding(3.dp)
+                            ) {
+                                Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null)
+                            }
+                        }
+                    ),
+                    fontSize = 12.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = getFontFamily(Constants.MONTSERRAT_MEDIUM),
+                    color = textColorLight,
+                    modifier = Modifier.padding(top = 5.dp, start = 14.dp)
+                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                ) {
+                    StreakBarPrime(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 18.dp, top = 6.dp), daysDone = 7
+                    )
+                    Text(
+                        "MB Prime",
+                        fontSize = 6.sp,
+                        lineHeight = 7.sp,
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                        color = textColorDark,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(end = 12.dp)
+                            .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                            .padding(horizontal = 2.dp, vertical = 1.dp)
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, end = 14.dp), contentAlignment = Alignment.CenterEnd
+                ) {
+                    Canvas(
+                        Modifier
+                            .fillMaxWidth(0.9f)
+                            .height(18.dp)
+                    ) {
+                        drawPath(
+                            path = Path().apply {
+                                lineTo(size.width - size.height / 2, 0f)
+                                lineTo(size.width, size.height / 2)
+                                lineTo(size.width - size.height / 2, size.height)
+                                lineTo(0f, size.height)
+                                lineTo(size.height / 2, size.height / 2)
+                                lineTo(0f, 0f)
+                                close()
+                            },
+                            brush = Brush.linearGradient(colors = listOf(Color(0xfffff7e1), Color(0xffffeebe)))
+                        )
+                    }
+                    Text(
+                        buildAnnotatedString {
+                            appendInlineContent("LoyaltyIcon")
+                            withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                                append(" Earn")
+                            }
+                            append(" 40 points each day")
+                        },
+                        inlineContent = mapOf(
+                            "LoyaltyIcon" to InlineTextContent(
+                                placeholder = Placeholder(
+                                    14.sp,
+                                    height = 12.sp,
+                                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                                )
+                            ) {
+                                Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null)
+                            }
+                        ),
+                        fontSize = 12.sp,
+                        color = Color.Black,
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+        AnimatedVisibility(
+            visible = showPrize,
+            enter = slideInVertically(
+                initialOffsetY = { it }, // full slide from below
+                animationSpec = tween(500, easing = FastOutSlowInEasing)
+            )+ fadeIn(
+                animationSpec = tween(300)
+            )
+        ) {
+            val image = painterResource(R.drawable.rays_loyalty)
+            Box(Modifier.wrapContentHeight()) {
+                Column(
+                    modifier = modifier
+                        .drawBehind {
+                            with(image) {
+                                draw(size = Size(size.width, size.height))
+                            }
+                        }
+                        .padding(bottom = 21.dp, top = 25.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(painter = painterResource(R.drawable.congratulations_text), contentDescription = null)
+                    Image(painter = painterResource(R.drawable.ic_prime_crown), contentDescription = null, modifier = Modifier.size(70.dp))
+                    Text(
+                        "MB PRIME",
+                        fontSize = 22.sp,
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_BOLD),
+                        color = Color.Black,
+                        modifier = Modifier.padding(top = 15.dp)
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .padding(horizontal = 10.dp)
+                                .border(
+                                    width = 1.dp,
+                                    brush = Brush.verticalGradient(colors = listOf(Color(0x66ffc72c), Color(0xffbf568c))),
+                                    shape = RoundedCornerShape(50)
+                                )
+                                .clip(RoundedCornerShape(50))
+                        ) {
+                            Text(
+                                buildAnnotatedString {
+                                    append("Now, access phone numbers of ")
+                                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                                        append("30 owners*")
+                                    }
+                                    append(" for ")
+                                    withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                                        append("FREE")
+                                    }
+
+                                },
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                                fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        Image(
+                            painter = painterResource(R.drawable.gradient_notch_bar), contentDescription = null,
+                            modifier = Modifier.background(color = Color(0xfffdf9ec).copy(alpha = 0.9f))
+                        )
+                    }
+                    Spacer(Modifier.height(15.dp))
+                    Text(
+                        "*Limit of 1 property per day",
+                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                        fontSize = 12.sp,
+                        color = textColorDark
+                    )
+                }
+                if (showOutsideAnimation) {
+                    LottieAnimation(
+                        composition = outsideAnimSpec.value,
+                        progress = { outsideAnimProgress },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+            }
         }
     }
 }
@@ -956,7 +1218,7 @@ fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, isPrime: Boolean, 
     LaunchedEffect(Unit) {
         delay(100)
         reverseDays = true
-        while(resetDays>0){
+        while (resetDays > 0) {
             resetDays--
             delay(300)
         }
@@ -1039,13 +1301,17 @@ fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, isPrime: Boolean, 
                 )
             } else {
                 if (isPrime) {
-                    StreakBarPrime(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 18.dp, top = 6.dp), resetDays)
+                    StreakBarPrime(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 18.dp, top = 6.dp), resetDays
+                    )
                 } else {
-                    StreakBarNonPrime(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 18.dp, top = 6.dp),resetDays)
+                    StreakBarNonPrime(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 18.dp, top = 6.dp), resetDays
+                    )
                 }
             }
             if (isPrime) {
@@ -1179,8 +1445,10 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
             }
             .padding(top = 28.dp, bottom = 21.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(Modifier
-            .fillMaxWidth()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+        ) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 MegaIntroTitle(modifier = Modifier.fillMaxWidth(fraction = 0.7f))
                 ScaledImage(showBoxContent)
@@ -1278,127 +1546,127 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
                     ) + fadeIn(
                         animationSpec = tween(300)
                     ),
-                ){
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
                 ) {
-                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Canvas(
-                            modifier = Modifier
-                                .width(90.dp)
-                        ) {
-                            val arrowWidth = 40
-                            val centerX = size.width / 2
-                            val centerY = size.height / 2
-                            val colorWithOpacity = textColorDark.copy(alpha = 0.30f)
-
-                            // Draw left part of the horizontal line (before the arrow)
-                            drawLine(
-                                color = colorWithOpacity,
-                                start = Offset(0f, centerY),
-                                end = Offset(centerX - arrowWidth / 2, centerY),
-                                strokeWidth = 1f
-                            )
-
-                            // Draw right part of the horizontal line (after the arrow)
-                            drawLine(
-                                color = colorWithOpacity,
-                                start = Offset(centerX + arrowWidth / 2, centerY),
-                                end = Offset(size.width, centerY),
-                                strokeWidth = 1f
-                            )
-                            drawLine(
-                                color = colorWithOpacity,
-                                start = Offset(centerX - arrowWidth / 2, centerY),
-                                end = Offset(centerX, centerY + arrowWidth / 2),
-                                strokeWidth = 1f
-                            )
-                            drawLine(
-                                color = colorWithOpacity,
-                                start = Offset(centerX, centerY + arrowWidth / 2),
-                                end = Offset(centerX + arrowWidth / 2, centerY),
-                                strokeWidth = 1f
-                            )
-                        }
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 17.dp)
-                        ) {
-                            DottedBorderBox(
-                                borderColor = Color(0xffffd86a),
-                                cornerRadius = 16.dp,
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Canvas(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 13.dp)
-                                    .padding(horizontal = 12.dp)
-                                    .background(color = Color(0xb3ffffff))
+                                    .width(90.dp)
                             ) {
-                                Column {
-                                    IntroStreakBar(modifier = Modifier, daysDone)
-                                }
-                            }
-                            Box(contentAlignment = Alignment.Center) {
-                                Canvas(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(26.dp)
-                                        .padding(horizontal = 36.dp)
-                                ) {
-                                    drawPath(
-                                        path = Path().apply {
-                                            lineTo(size.width, 0f)
-                                            lineTo(size.width - size.height / 2, size.height / 2)
-                                            lineTo(size.width, size.height)
-                                            lineTo(0f, size.height)
-                                            lineTo(0f + size.height / 2, size.height / 2)
-                                            lineTo(0f, 0f)
-                                            close()
-                                        },
-                                        color = Color(0xfffff7e1)
-                                    )
-                                }
-                                Text(
-                                    buildAnnotatedString {
-                                        append("Additionally, earn ")
-                                        appendInlineContent("LoyaltyIcon")
-                                        withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                                            append(" 50 points each day")
-                                        }
-                                    },
-                                    inlineContent = mapOf(
-                                        "LoyaltyIcon" to InlineTextContent(
-                                            placeholder = Placeholder(
-                                                14.sp,
-                                                height = 12.sp,
-                                                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-                                            )
-                                        ) {
-                                            Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null)
-                                        }
-                                    ),
-                                    fontSize = 12.sp,
-                                    color = Color.Black,
-                                    fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                                val arrowWidth = 40
+                                val centerX = size.width / 2
+                                val centerY = size.height / 2
+                                val colorWithOpacity = textColorDark.copy(alpha = 0.30f)
+
+                                // Draw left part of the horizontal line (before the arrow)
+                                drawLine(
+                                    color = colorWithOpacity,
+                                    start = Offset(0f, centerY),
+                                    end = Offset(centerX - arrowWidth / 2, centerY),
+                                    strokeWidth = 1f
+                                )
+
+                                // Draw right part of the horizontal line (after the arrow)
+                                drawLine(
+                                    color = colorWithOpacity,
+                                    start = Offset(centerX + arrowWidth / 2, centerY),
+                                    end = Offset(size.width, centerY),
+                                    strokeWidth = 1f
+                                )
+                                drawLine(
+                                    color = colorWithOpacity,
+                                    start = Offset(centerX - arrowWidth / 2, centerY),
+                                    end = Offset(centerX, centerY + arrowWidth / 2),
+                                    strokeWidth = 1f
+                                )
+                                drawLine(
+                                    color = colorWithOpacity,
+                                    start = Offset(centerX, centerY + arrowWidth / 2),
+                                    end = Offset(centerX + arrowWidth / 2, centerY),
+                                    strokeWidth = 1f
                                 )
                             }
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 17.dp)
+                            ) {
+                                DottedBorderBox(
+                                    borderColor = Color(0xffffd86a),
+                                    cornerRadius = 16.dp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 13.dp)
+                                        .padding(horizontal = 12.dp)
+                                        .background(color = Color(0xb3ffffff))
+                                ) {
+                                    Column {
+                                        IntroStreakBar(modifier = Modifier, daysDone)
+                                    }
+                                }
+                                Box(contentAlignment = Alignment.Center) {
+                                    Canvas(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(26.dp)
+                                            .padding(horizontal = 36.dp)
+                                    ) {
+                                        drawPath(
+                                            path = Path().apply {
+                                                lineTo(size.width, 0f)
+                                                lineTo(size.width - size.height / 2, size.height / 2)
+                                                lineTo(size.width, size.height)
+                                                lineTo(0f, size.height)
+                                                lineTo(0f + size.height / 2, size.height / 2)
+                                                lineTo(0f, 0f)
+                                                close()
+                                            },
+                                            color = Color(0xfffff7e1)
+                                        )
+                                    }
+                                    Text(
+                                        buildAnnotatedString {
+                                            append("Additionally, earn ")
+                                            appendInlineContent("LoyaltyIcon")
+                                            withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                                                append(" 50 points each day")
+                                            }
+                                        },
+                                        inlineContent = mapOf(
+                                            "LoyaltyIcon" to InlineTextContent(
+                                                placeholder = Placeholder(
+                                                    14.sp,
+                                                    height = 12.sp,
+                                                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                                                )
+                                            ) {
+                                                Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null)
+                                            }
+                                        ),
+                                        fontSize = 12.sp,
+                                        color = Color.Black,
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                                    )
+                                }
+                            }
+                            Text(
+                                "Got it",
+                                color = mbRed,
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                modifier = Modifier
+                                    .padding(top = 20.dp, bottom = 21.dp)
+                                    .noRippleClick { onClose() }
+                                    .padding(vertical = 6.dp, horizontal = 16.dp)
+                            )
                         }
-                        Text(
-                            "Got it",
-                            color = mbRed,
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                            modifier = Modifier
-                                .padding(top = 20.dp, bottom = 21.dp)
-                                .noRippleClick { onClose() }
-                                .padding(vertical = 6.dp, horizontal = 16.dp)
-                        )
                     }
                 }
-            }
             }
             if (showOutsideAnimation) {
                 LottieAnimation(
@@ -1851,7 +2119,7 @@ private fun StreakBarNonPrime(modifier: Modifier = Modifier, daysDone: Int, show
 }
 
 @Composable
-private fun ResetStreakBar(modifier: Modifier = Modifier, isPrime: Boolean=true,resetDays: Int) {
+private fun ResetStreakBar(modifier: Modifier = Modifier, isPrime: Boolean = true, resetDays: Int) {
     Box(modifier, contentAlignment = Alignment.Center) {
         Row(
             Modifier
