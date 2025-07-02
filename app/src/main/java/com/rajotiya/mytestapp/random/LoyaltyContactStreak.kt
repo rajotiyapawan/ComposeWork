@@ -1,14 +1,18 @@
 package com.rajotiya.mytestapp.random
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
@@ -23,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
@@ -57,6 +63,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -64,11 +74,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieClipSpec
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
@@ -98,7 +111,7 @@ fun LoyaltyContactStreakScreens(modifier: Modifier = Modifier) {
     val (screenInt, onChange) = remember { mutableIntStateOf(4) }
     LaunchedEffect(screenInt) {
         if (screenInt != 4) {
-            delay(2000)
+            delay(7000)
             onChange(4)
         }
     }
@@ -718,7 +731,7 @@ fun AnimatedMegaEnd(modifier: Modifier = Modifier, onClose: () -> Unit) {
         speed = 1f,
         isPlaying = showOutsideAnimation,
     )
-    Box(
+    Column (
         modifier = modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 10.dp)
             .border(
@@ -730,16 +743,10 @@ fun AnimatedMegaEnd(modifier: Modifier = Modifier, onClose: () -> Unit) {
                 brush = Brush.linearGradient(colors = listOf(Color(0xfffffcf2), Color(0xfffff5cc))),
                 shape = RoundedCornerShape(16.dp)
             )
-            .animateContentSize(
-                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
-            )
     ) {
         AnimatedVisibility(
             visible = !showPrize,
-            exit = slideOutVertically(
-                targetOffsetY = { it },
-                animationSpec = tween(500)
-            )+fadeOut()
+            exit = fadeOut(animationSpec = tween(300))
         ) {
             Column(
                 modifier = modifier.padding(bottom = 7.dp)
@@ -747,7 +754,7 @@ fun AnimatedMegaEnd(modifier: Modifier = Modifier, onClose: () -> Unit) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, end = 4.dp, start = 16.dp),
+                        .padding(end = 4.dp, start = 16.dp),
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Image(painter = painterResource(R.drawable.congratulations_text), contentDescription = null)
@@ -855,19 +862,12 @@ fun AnimatedMegaEnd(modifier: Modifier = Modifier, onClose: () -> Unit) {
                 }
             }
         }
-        AnimatedVisibility(
-            visible = showPrize,
-            enter = slideInVertically(
-                initialOffsetY = { it }, // full slide from below
-                animationSpec = tween(500, easing = FastOutSlowInEasing)
-            )+ fadeIn(
-                animationSpec = tween(300)
-            )
-        ) {
+        AnimateRealHeightAppear(
+            visible = showPrize) {
             val image = painterResource(R.drawable.rays_loyalty)
-            Box(Modifier.wrapContentHeight()) {
+            Box(Modifier.fillMaxWidth().wrapContentHeight(), contentAlignment = Alignment.BottomCenter) {
                 Column(
-                    modifier = modifier
+                    modifier = Modifier
                         .drawBehind {
                             with(image) {
                                 draw(size = Size(size.width, size.height))
@@ -1397,6 +1397,10 @@ fun LoyaltyContactReset2Banner(modifier: Modifier = Modifier, isPrime: Boolean, 
 @Composable
 fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () -> Unit) {
     // Load Lottie animations
+    LaunchedEffect(Unit) {
+        Log.d("timeSpent","hi")
+    }
+    val animatable = rememberLottieAnimatable()
     val boxAnimSpec = rememberLottieComposition(LottieCompositionSpec.Asset("open-gift.json"))
     val outsideAnimSpec = rememberLottieComposition(LottieCompositionSpec.Asset("desktop-confetti-blown-up.json"))
     var showBoxContent by remember { mutableStateOf(false) }
@@ -1404,24 +1408,24 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
     var showSlideUpContent by remember { mutableStateOf(false) }
 
     // Lottie animation progress
-    val boxAnimProgress by animateLottieCompositionAsState(
-        composition = boxAnimSpec.value,
-        iterations = 1,
-        speed = 5f,
-        isPlaying = true
-    )
-    val outsideAnimProgress by animateLottieCompositionAsState(
-        composition = outsideAnimSpec.value,
-        iterations = 1,
-        speed = 1f,
-        isPlaying = showOutsideAnimation,
-    )
-    LaunchedEffect(boxAnimProgress) {
-        if (boxAnimProgress >= 1f && !showBoxContent) {
+    LaunchedEffect(boxAnimSpec.value) {
+        if (boxAnimSpec.value != null) {
+            animatable.animate(
+                boxAnimSpec.value,
+                iterations = 1, // Play once
+                continueFromPreviousAnimate = false,
+                clipSpec = LottieClipSpec.Frame(0, 50)
+            )
             showBoxContent = true
             showOutsideAnimation = true
         }
     }
+    val outsideAnimProgress by animateLottieCompositionAsState(
+        composition = outsideAnimSpec.value,
+        iterations = 1,
+        speed = 2f,
+        isPlaying = showOutsideAnimation,
+    )
     // Listen to outside animation end
     LaunchedEffect(outsideAnimProgress) {
         if (outsideAnimProgress >= 1f && !showSlideUpContent) {
@@ -1429,262 +1433,334 @@ fun LoyaltyContactStreakPrimeIntro(modifier: Modifier = Modifier, onClose: () ->
             showOutsideAnimation = false
         }
     }
+    LaunchedEffect(showSlideUpContent) {
+        if (showSlideUpContent){
+            delay(3400)
+            Log.d("timeSpent","hi")
+            onClose()
+        }
+    }
 
     val daysDone = 3
     val image = painterResource(id = R.drawable.loyalty_contact_streak_bg)
     val image1 = painterResource(id = R.drawable.rays_loyalty)
-    Column(
-        modifier = modifier
-            .drawBehind {
-                with(image) {
-                    draw(size = Size(size.width, size.height))
-                }
-                with(image1) {
-                    draw(size = Size(size.width, (size.height) * 0.6f))
-                }
-            }
-            .padding(top = 28.dp, bottom = 21.dp), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-        ) {
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                MegaIntroTitle(modifier = Modifier.fillMaxWidth(fraction = 0.7f))
-                ScaledImage(showBoxContent)
-                Box {
-                    if (!showBoxContent) {
-                        LottieAnimation(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp),
-                            composition = boxAnimSpec.value,
-                            progress = { boxAnimProgress }
-                        )
+    Box(contentAlignment = Alignment.BottomCenter) {
+        Column(
+            modifier = modifier
+                .drawBehind {
+                    with(image) {
+                        draw(size = Size(size.width, size.height))
                     }
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = showBoxContent,
-                        enter = scaleIn(
-                            initialScale = 0.4f,
-                            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
-                        ) + fadeIn(animationSpec = tween(300)),
-                        exit = fadeOut()
-                    ) {
-                        Column {
-                            PrimeRewardDetailWithBg(
+                    with(image1) {
+                        draw(size = Size(size.width, (size.height) * 0.6f))
+                    }
+                }
+                .padding(top = 28.dp, bottom = 21.dp), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    MegaIntroTitle(modifier = Modifier.fillMaxWidth(fraction = 0.7f))
+                    ScaledImage(showBoxContent)
+                    Box {
+                        if (!showBoxContent) {
+                            LottieAnimation(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 4.dp)
+                                    .height(100.dp),
+                                composition = boxAnimSpec.value,
+                                progress = { animatable.progress }
                             )
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 4.dp)
-                                    .padding(horizontal = 30.dp), contentAlignment = Alignment.TopCenter
-                            ) {
-                                Row(
+                        }
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = showBoxContent,
+                            enter = scaleIn(
+                                initialScale = 0.4f,
+                                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+                            ) + fadeIn(animationSpec = tween(300)),
+                            exit = fadeOut()
+                        ) {
+                            Column {
+                                PrimeRewardDetailWithBg(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 4.dp)
+                                )
+                                Box(
                                     Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 12.dp)
-                                        .border(
-                                            width = 1.dp,
-                                            brush = Brush.verticalGradient(colors = listOf(Color(0x66ffc72c), Color(0xffbf568c))),
-                                            shape = RoundedCornerShape(50)
-                                        )
-                                        .padding(top = 12.dp, bottom = 10.dp, start = 6.dp, end = 6.dp)
+                                        .padding(top = 4.dp)
+                                        .padding(horizontal = 30.dp), contentAlignment = Alignment.TopCenter
                                 ) {
-                                    Text(buildAnnotatedString {
-                                        append("Get access to ")
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                                brush = Brush.linearGradient(colors = listOf(Color(0xffffc72c), mbRed))
-                                            )
-                                        ) {
-                                            append("Exclusive Owner Properties")
-                                        }
-                                    }, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-                                }
-                                Text(
-                                    buildAnnotatedString {
-                                        append("worth ")
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                                color = mbRed
-                                            )
-                                        ) {
-                                            append("₹1,899")
-                                        }
-                                        append(" for ")
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                                color = Color(0xff009681)
-                                            )
-                                        ) {
-                                            append("FREE")
-                                        }
-                                    },
-                                    fontSize = 12.sp,
-                                    color = Color.Black,
-                                    fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
-                                    modifier = Modifier
-                                        .background(color = Color(0xfffdf9ec).copy(alpha = 0.9f))
-                                        .padding(horizontal = 12.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-                Spacer(Modifier.height(20.dp))
-                AnimatedVisibility(
-                    visible = showSlideUpContent,
-                    enter = slideInVertically(
-                        initialOffsetY = { it }, // full slide from below
-                        animationSpec = tween(700, easing = FastOutSlowInEasing)
-                    ) + fadeIn(
-                        animationSpec = tween(300)
-                    ),
-                ) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    ) {
-                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Canvas(
-                                modifier = Modifier
-                                    .width(90.dp)
-                            ) {
-                                val arrowWidth = 40
-                                val centerX = size.width / 2
-                                val centerY = size.height / 2
-                                val colorWithOpacity = textColorDark.copy(alpha = 0.30f)
-
-                                // Draw left part of the horizontal line (before the arrow)
-                                drawLine(
-                                    color = colorWithOpacity,
-                                    start = Offset(0f, centerY),
-                                    end = Offset(centerX - arrowWidth / 2, centerY),
-                                    strokeWidth = 1f
-                                )
-
-                                // Draw right part of the horizontal line (after the arrow)
-                                drawLine(
-                                    color = colorWithOpacity,
-                                    start = Offset(centerX + arrowWidth / 2, centerY),
-                                    end = Offset(size.width, centerY),
-                                    strokeWidth = 1f
-                                )
-                                drawLine(
-                                    color = colorWithOpacity,
-                                    start = Offset(centerX - arrowWidth / 2, centerY),
-                                    end = Offset(centerX, centerY + arrowWidth / 2),
-                                    strokeWidth = 1f
-                                )
-                                drawLine(
-                                    color = colorWithOpacity,
-                                    start = Offset(centerX, centerY + arrowWidth / 2),
-                                    end = Offset(centerX + arrowWidth / 2, centerY),
-                                    strokeWidth = 1f
-                                )
-                            }
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 17.dp)
-                            ) {
-                                DottedBorderBox(
-                                    borderColor = Color(0xffffd86a),
-                                    cornerRadius = 16.dp,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 13.dp)
-                                        .padding(horizontal = 12.dp)
-                                        .background(color = Color(0xb3ffffff))
-                                ) {
-                                    Column {
-                                        IntroStreakBar(modifier = Modifier, daysDone)
-                                    }
-                                }
-                                Box(contentAlignment = Alignment.Center) {
-                                    Canvas(
+                                    Row(
                                         Modifier
                                             .fillMaxWidth()
-                                            .height(26.dp)
-                                            .padding(horizontal = 36.dp)
+                                            .padding(top = 12.dp)
+                                            .border(
+                                                width = 1.dp,
+                                                brush = Brush.verticalGradient(
+                                                    colors = listOf(
+                                                        Color(0x66ffc72c),
+                                                        Color(0xffbf568c)
+                                                    )
+                                                ),
+                                                shape = RoundedCornerShape(50)
+                                            )
+                                            .padding(top = 12.dp, bottom = 10.dp, start = 6.dp, end = 6.dp)
                                     ) {
-                                        drawPath(
-                                            path = Path().apply {
-                                                lineTo(size.width, 0f)
-                                                lineTo(size.width - size.height / 2, size.height / 2)
-                                                lineTo(size.width, size.height)
-                                                lineTo(0f, size.height)
-                                                lineTo(0f + size.height / 2, size.height / 2)
-                                                lineTo(0f, 0f)
-                                                close()
+                                        Text(
+                                            buildAnnotatedString {
+                                                append("Get access to ")
+                                                withStyle(
+                                                    style = SpanStyle(
+                                                        fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                        brush = Brush.linearGradient(colors = listOf(Color(0xffffc72c), mbRed))
+                                                    )
+                                                ) {
+                                                    append("Exclusive Owner Properties")
+                                                }
                                             },
-                                            color = Color(0xfffff7e1)
+                                            fontSize = 12.sp,
+                                            lineHeight = 16.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
                                         )
                                     }
                                     Text(
                                         buildAnnotatedString {
-                                            append("Additionally, earn ")
-                                            appendInlineContent("LoyaltyIcon")
-                                            withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
-                                                append(" 50 points each day")
-                                            }
-                                        },
-                                        inlineContent = mapOf(
-                                            "LoyaltyIcon" to InlineTextContent(
-                                                placeholder = Placeholder(
-                                                    14.sp,
-                                                    height = 12.sp,
-                                                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                                            append("worth ")
+                                            withStyle(
+                                                style = SpanStyle(
+                                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                    color = mbRed
                                                 )
                                             ) {
-                                                Image(painter = painterResource(R.drawable.loyalty_coin), contentDescription = null)
+                                                append("₹1,899")
                                             }
-                                        ),
+                                            append(" for ")
+                                            withStyle(
+                                                style = SpanStyle(
+                                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                                    color = Color(0xff009681)
+                                                )
+                                            ) {
+                                                append("FREE")
+                                            }
+                                        },
                                         fontSize = 12.sp,
                                         color = Color.Black,
-                                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                                        fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR),
+                                        modifier = Modifier
+                                            .background(color = Color(0xfffdf9ec).copy(alpha = 0.9f))
+                                            .padding(horizontal = 12.dp)
                                     )
                                 }
                             }
-                            Text(
-                                "Got it",
-                                color = mbRed,
-                                fontSize = 14.sp,
-                                lineHeight = 20.sp,
-                                fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
-                                modifier = Modifier
-                                    .padding(top = 20.dp, bottom = 21.dp)
-                                    .noRippleClick { onClose() }
-                                    .padding(vertical = 6.dp, horizontal = 16.dp)
-                            )
+                        }
+                    }
+                    Spacer(Modifier.height(20.dp))
+                    AnimateRealHeightAppear(showSlideUpContent){
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Canvas(
+                                    modifier = Modifier
+                                        .width(90.dp)
+                                ) {
+                                    val arrowWidth = 40
+                                    val centerX = size.width / 2
+                                    val centerY = size.height / 2
+                                    val colorWithOpacity = textColorDark.copy(alpha = 0.30f)
+
+                                    // Draw left part of the horizontal line (before the arrow)
+                                    drawLine(
+                                        color = colorWithOpacity,
+                                        start = Offset(0f, centerY),
+                                        end = Offset(centerX - arrowWidth / 2, centerY),
+                                        strokeWidth = 1f
+                                    )
+
+                                    // Draw right part of the horizontal line (after the arrow)
+                                    drawLine(
+                                        color = colorWithOpacity,
+                                        start = Offset(centerX + arrowWidth / 2, centerY),
+                                        end = Offset(size.width, centerY),
+                                        strokeWidth = 1f
+                                    )
+                                    drawLine(
+                                        color = colorWithOpacity,
+                                        start = Offset(centerX - arrowWidth / 2, centerY),
+                                        end = Offset(centerX, centerY + arrowWidth / 2),
+                                        strokeWidth = 1f
+                                    )
+                                    drawLine(
+                                        color = colorWithOpacity,
+                                        start = Offset(centerX, centerY + arrowWidth / 2),
+                                        end = Offset(centerX + arrowWidth / 2, centerY),
+                                        strokeWidth = 1f
+                                    )
+                                }
+                                Box(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 17.dp)
+                                ) {
+                                    DottedBorderBox(
+                                        borderColor = Color(0xffffd86a),
+                                        cornerRadius = 16.dp,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 13.dp)
+                                            .padding(horizontal = 12.dp)
+                                            .background(color = Color(0xb3ffffff))
+                                    ) {
+                                        Column {
+                                            IntroStreakBar(modifier = Modifier, daysDone)
+                                        }
+                                    }
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Canvas(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(26.dp)
+                                                .padding(horizontal = 36.dp)
+                                        ) {
+                                            drawPath(
+                                                path = Path().apply {
+                                                    lineTo(size.width, 0f)
+                                                    lineTo(size.width - size.height / 2, size.height / 2)
+                                                    lineTo(size.width, size.height)
+                                                    lineTo(0f, size.height)
+                                                    lineTo(0f + size.height / 2, size.height / 2)
+                                                    lineTo(0f, 0f)
+                                                    close()
+                                                },
+                                                color = Color(0xfffff7e1)
+                                            )
+                                        }
+                                        Text(
+                                            buildAnnotatedString {
+                                                append("Additionally, earn ")
+                                                appendInlineContent("LoyaltyIcon")
+                                                withStyle(style = SpanStyle(fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD))) {
+                                                    append(" 50 points each day")
+                                                }
+                                            },
+                                            inlineContent = mapOf(
+                                                "LoyaltyIcon" to InlineTextContent(
+                                                    placeholder = Placeholder(
+                                                        14.sp,
+                                                        height = 12.sp,
+                                                        placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                                                    )
+                                                ) {
+                                                    Image(
+                                                        painter = painterResource(R.drawable.loyalty_coin),
+                                                        contentDescription = null
+                                                    )
+                                                }
+                                            ),
+                                            fontSize = 12.sp,
+                                            color = Color.Black,
+                                            fontFamily = getFontFamily(Constants.MONTSERRAT_REGULAR)
+                                        )
+                                    }
+                                }
+                                Text(
+                                    "Got it",
+                                    color = mbRed,
+                                    fontSize = 14.sp,
+                                    lineHeight = 20.sp,
+                                    fontFamily = getFontFamily(Constants.MONTSERRAT_SEMIBOLD),
+                                    modifier = Modifier
+                                        .padding(top = 20.dp, bottom = 21.dp)
+                                        .noRippleClick { onClose() }
+                                        .padding(vertical = 6.dp, horizontal = 16.dp)
+                                )
+                            }
                         }
                     }
                 }
-            }
-            if (showOutsideAnimation) {
-                LottieAnimation(
-                    composition = outsideAnimSpec.value,
-                    progress = { outsideAnimProgress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .align(Alignment.BottomCenter)
-                )
+                if (showOutsideAnimation) {
+                    LottieAnimation(
+                        composition = outsideAnimSpec.value,
+                        progress = { outsideAnimProgress },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .align(Alignment.BottomCenter)
+                    )
+                }
             }
         }
     }
 }
 
+
+@Composable
+fun AnimateRealHeightAppear(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+
+    // Step 1: Measure content height invisibly but off-screen
+    var measuredHeightPx by remember { mutableStateOf(0) }
+    var hasMeasured by remember { mutableStateOf(false) }
+
+    val animHeightPx = remember { Animatable(0f) }
+
+    // Step 2: Start animation only after measurement
+    LaunchedEffect(visible, hasMeasured) {
+        if (visible && hasMeasured) {
+            animHeightPx.animateTo(
+                measuredHeightPx.toFloat(),
+                animationSpec = tween(durationMillis = 400)
+            )
+        } else if (!visible && hasMeasured) {
+            animHeightPx.animateTo(0f, tween(300))
+        }
+    }
+
+    // Step 3: Off-screen composition to get size (does not render visually or take space)
+    if (visible && !hasMeasured) {
+        Layout(
+            content = content,
+            modifier = Modifier.alpha(0f)
+        ) { measurables, constraints ->
+            val placeables = measurables.map { it.measure(constraints) }
+            val maxHeight = placeables.maxOfOrNull { it.height } ?: 0
+            if (maxHeight > 0) {
+                measuredHeightPx = maxHeight
+                hasMeasured = true
+            }
+            layout(0, 0) {}
+        }
+    }
+
+    // Step 4: Animated appearance
+    if (hasMeasured && visible) {
+        Box(
+            modifier = modifier
+                .height(with(density) { animHeightPx.value.toDp() })
+        ) {
+            content()
+        }
+    }
+}
+
+
+
+
 @Composable
 private fun ScaledImage(shouldShrink: Boolean) {
-    val targetHeight = if (shouldShrink) 40.dp else 60.dp
+    val targetHeight = if (shouldShrink) 30.dp else 40.dp
 
     val animatedHeight by animateDpAsState(
         targetValue = targetHeight,
@@ -1695,7 +1771,7 @@ private fun ScaledImage(shouldShrink: Boolean) {
     Image(
         painter = painterResource(R.drawable.get_rewarded_text),
         contentDescription = null, contentScale = ContentScale.FillHeight,
-        modifier = Modifier.height(animatedHeight)
+        modifier = Modifier.padding(top = 4.dp).height(animatedHeight)
     )
 }
 
