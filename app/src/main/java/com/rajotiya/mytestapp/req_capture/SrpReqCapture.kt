@@ -1,6 +1,7 @@
 package com.rajotiya.mytestapp.req_capture
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,12 +22,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -48,15 +52,17 @@ fun RequirementCaptureFlowRoot(
     modifier: Modifier = Modifier,
     viewModel: RequirementCaptureFlowVM
 ) {
-    val state = viewModel.uiState.collectAsState().value
+    val state by viewModel.uiState.collectAsState()
     val localFocusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 RequirementCaptureFlowEffect.CloseDialog -> {}
                 is RequirementCaptureFlowEffect.ShowToast -> {
-                    // show toast/snackbar
+                    Log.d("Toast", "Name: ${state.name} | Email: ${state.email} | Phone: ${state.isd} ${state.phone}")
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -102,7 +108,9 @@ fun RequirementCaptureFlowRoot(
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            BottomRedButton(enable = true, ctaText = "Next", onClick = {})
+            BottomRedButton(enable = true, ctaText = "Next", onClick = {
+                viewModel.processIntent(RequirementCaptureFlowIntent.SubmitForm)
+            })
         }
     }
 }
@@ -138,7 +146,7 @@ fun FormScreen(
             onValueChange = {
                 Log.d("NameTextField", "New value: $it")
                 nameChange(it.filter { char -> char.isLetter() || char.isWhitespace() })
-//                sendIntent(RequirementCaptureFlowIntent.NameChanged(it.filter { char -> char.isLetter() || char.isWhitespace() }))
+                sendIntent(RequirementCaptureFlowIntent.NameChanged(it.filter { char -> char.isLetter() || char.isWhitespace() }))
             },
             label = "Name",
             singleLine = true,
@@ -157,7 +165,7 @@ fun FormScreen(
             onValueChange = {
                 Log.d("EmailTextField", "New value: $it")
                 emailChange(it)
-//                sendIntent(RequirementCaptureFlowIntent.EmailChanged(it))
+                sendIntent(RequirementCaptureFlowIntent.EmailChanged(it))
             },
             label = "Email",
             singleLine = true,
@@ -180,12 +188,11 @@ fun FormScreen(
             isd = isd,
             isdChange = {
                 isdChange(it)
-//                sendIntent(RequirementCaptureFlowIntent.IsdChanged(it))
             },
             mobile = mobile,
             mobileChange = {
                 mobileChange(it)
-//                sendIntent(RequirementCaptureFlowIntent.PhoneChanged(it))
+                sendIntent(RequirementCaptureFlowIntent.PhoneChanged(it))
             },
             label = "Phone Number",
             isError = false,

@@ -51,6 +51,10 @@ class RequirementCaptureFlowVM :
     private fun submitForm() {
         val state = uiState.value
 
+        // testing
+        sendEffect { RequirementCaptureFlowEffect.ShowToast("Form submitted") }
+        return
+
         if (state.name.isBlank() || state.phone.isBlank()) {
             sendEffect { RequirementCaptureFlowEffect.ShowToast("Fill required fields") }
             return
