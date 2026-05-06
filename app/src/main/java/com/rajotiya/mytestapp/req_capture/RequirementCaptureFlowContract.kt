@@ -12,9 +12,9 @@ enum class RequirementCaptureFlowScreen { FORM, OTP }
 
 data class RequirementCaptureFlowState(
     val screen: RequirementCaptureFlowScreen = RequirementCaptureFlowScreen.FORM,
-    val name: TextFieldValue = TextFieldValue(""),
-    val phone: TextFieldValue = TextFieldValue(""),
-    val email: TextFieldValue = TextFieldValue(""),
+    val name: String = "",
+    val phone: String = "",
+    val email: String = "",
     val isd: String = "",
     val otp: String = "",
     val isLoading: Boolean = false,
@@ -22,10 +22,10 @@ data class RequirementCaptureFlowState(
 )
 
 sealed interface RequirementCaptureFlowIntent : UiIntent {
-    data class NameChanged(val value: TextFieldValue) : RequirementCaptureFlowIntent
-    data class PhoneChanged(val value: TextFieldValue) : RequirementCaptureFlowIntent
+    data class NameChanged(val value: String) : RequirementCaptureFlowIntent
+    data class PhoneChanged(val value: String) : RequirementCaptureFlowIntent
     data class IsdChanged(val value: String) : RequirementCaptureFlowIntent
-    data class EmailChanged(val value: TextFieldValue) : RequirementCaptureFlowIntent
+    data class EmailChanged(val value: String) : RequirementCaptureFlowIntent
 
     object SubmitForm : RequirementCaptureFlowIntent
 

@@ -10,8 +10,8 @@ data class CountryListModel(
 ){
     @Keep
     data class Country(
-        val code:String?,
-        val displayName:String?,
-        val isdCodes:String?
+        val code:String,
+        val displayName:String,
+        val isdCodes:String
     )
 }

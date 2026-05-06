@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color as ComposeColor
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -33,6 +32,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.rajotiya.mytestapp.AppContext
 import com.rajotiya.mytestapp.R
+import com.rajotiya.mytestapp.aob_revamp.models.CountryListModel
+import com.rajotiya.mytestapp.aob_revamp.utils.loadJSONFromAsset
+import kotlin.jvm.java
+import androidx.compose.ui.graphics.Color as ComposeColor
 
 /**
  * Created by Pawan Rajotiya on 24-09-2024.
@@ -128,6 +131,18 @@ fun showErrorMessageToast(context: Context, message: String?) {
     } catch (npe: NullPointerException) {
         npe.printStackTrace()
     }
+}
+
+fun checkValueOfIsdCode(isdCode: Int): String {
+    var code = "+91"
+    val isdCodeList: CountryListModel = loadJSONFromAsset( "ISDCodes.json", CountryListModel::class.java) as CountryListModel
+    val itemList: ArrayList<CountryListModel.Country> = isdCodeList.countryCodes as ArrayList<CountryListModel.Country>
+    for (item in itemList) {
+        if (item.code == isdCode.toString()) {
+            code = item.isdCodes
+        }
+    }
+    return code
 }
 
 

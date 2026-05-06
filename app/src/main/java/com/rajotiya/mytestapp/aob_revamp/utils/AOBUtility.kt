@@ -219,7 +219,7 @@ fun FlowItem(modifier: Modifier = Modifier, item: String, selected: Boolean) {
 fun BottomRedButton(modifier: Modifier = Modifier, enable: Boolean, ctaText: String, onClick: () -> Unit) {
     Box(
         modifier = modifier
-            .clickable { if (enable) onClick() }
+            .noRippleClick { if (enable) onClick() }
             .background(color = if (enable) mbRed else disableButtonColor, shape = RoundedCornerShape(50))
     ) {
         Text(

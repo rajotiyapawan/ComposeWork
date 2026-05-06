@@ -3,8 +3,12 @@ package com.rajotiya.mytestapp.req_capture
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -17,15 +21,23 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.rajotiya.mytestapp.aob_revamp.ui.theme.mbRed
+import com.rajotiya.mytestapp.aob_revamp.ui.theme.textColorExtraLight
+import com.rajotiya.mytestapp.aob_revamp.utils.BottomRedButton
 import com.rajotiya.mytestapp.aob_revamp.utils.CustomMobileInputField
 import com.rajotiya.mytestapp.aob_revamp.utils.CustomTextField
+import com.rajotiya.mytestapp.utility.checkValueOfIsdCode
 
 /**
  * Created by Pawan Rajotiya on 06-05-2026.
@@ -37,6 +49,7 @@ fun RequirementCaptureFlowRoot(
     viewModel: RequirementCaptureFlowVM
 ) {
     val state = viewModel.uiState.collectAsState().value
+    val localFocusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -50,7 +63,13 @@ fun RequirementCaptureFlowRoot(
     }
 
     Column(
-        modifier
+        modifier.fillMaxHeight().background(Color.White)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                localFocusManager.clearFocus()
+            }
     ) {
         TopView(Modifier.fillMaxWidth())
 
@@ -70,6 +89,20 @@ fun RequirementCaptureFlowRoot(
                 RequirementCaptureFlowScreen.FORM -> FormScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
                 RequirementCaptureFlowScreen.OTP -> OtpScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
             }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .shadow(elevation = 8.dp, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp))
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            BottomRedButton(enable = true, ctaText = "Next", onClick = {})
         }
     }
 }
@@ -91,15 +124,21 @@ fun FormScreen(
     state: RequirementCaptureFlowState,
     sendIntent: (RequirementCaptureFlowIntent) -> Unit
 ) {
+    val (name, nameChange) = remember { mutableStateOf(state.name) }
+    val (email, emailChange) = remember { mutableStateOf(state.email) }
+    val (mobile, mobileChange) = remember { mutableStateOf(state.phone) }
+    val (isd, isdChange) = remember { mutableStateOf(checkValueOfIsdCode(state.isd.ifEmpty { "50" }.toInt())) }
+
     Column(
         modifier = modifier
     ) {
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.name.text,
+            value = name,
             onValueChange = {
                 Log.d("NameTextField", "New value: $it")
-                sendIntent(RequirementCaptureFlowIntent.NameChanged(TextFieldValue(it.filter { char -> char.isLetter() || char.isWhitespace() })))
+                nameChange(it.filter { char -> char.isLetter() || char.isWhitespace() })
+//                sendIntent(RequirementCaptureFlowIntent.NameChanged(it.filter { char -> char.isLetter() || char.isWhitespace() }))
             },
             label = "Name",
             singleLine = true,
@@ -114,9 +153,11 @@ fun FormScreen(
 
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.email.text,
+            value = email,
             onValueChange = {
-                sendIntent(RequirementCaptureFlowIntent.EmailChanged(TextFieldValue(it)))
+                Log.d("EmailTextField", "New value: $it")
+                emailChange(it)
+//                sendIntent(RequirementCaptureFlowIntent.EmailChanged(it))
             },
             label = "Email",
             singleLine = true,
@@ -134,17 +175,17 @@ fun FormScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         CustomMobileInputField(
             modifier = Modifier.fillMaxWidth(),
-            isd = state.isd,
+            isd = isd,
             isdChange = {
-                sendIntent(RequirementCaptureFlowIntent.IsdChanged(it))
+                isdChange(it)
+//                sendIntent(RequirementCaptureFlowIntent.IsdChanged(it))
             },
-            mobile = state.phone.text,
+            mobile = mobile,
             mobileChange = {
-                sendIntent(RequirementCaptureFlowIntent.PhoneChanged(TextFieldValue(it)))
+                mobileChange(it)
+//                sendIntent(RequirementCaptureFlowIntent.PhoneChanged(it))
             },
             label = "Phone Number",
             isError = false,
@@ -153,13 +194,8 @@ fun FormScreen(
             sendIntent(RequirementCaptureFlowIntent.IsdChanged(it.code ?: "50"))
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = { sendIntent(RequirementCaptureFlowIntent.SubmitForm) }
-        ) {
-            Text("Continue")
-        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "I agree to Magicbricks’ Term of use", color = textColorExtraLight, fontSize = 12.sp, lineHeight = 20.sp)
     }
 }
 
