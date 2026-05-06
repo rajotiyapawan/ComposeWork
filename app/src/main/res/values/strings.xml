@@ -2,4 +2,7 @@
     <string name="app_name">MyTestApp</string>
     <string name="title_activity_app_on_boarding_compose">AppOnBoardingComposeActivity</string>
     <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="you_re_now_an_mb_prime_member">You\'re now a MB Prime Member</string>
+    <string name="owner_contact_balance">"Owner Contacts Balance: "</string>
+    <string name="relationship_nmanager">Relationship Manager</string>
 </resources>

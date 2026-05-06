@@ -20,14 +20,21 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -40,6 +47,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
@@ -55,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import com.rajotiya.mytestapp.R
@@ -316,4 +326,90 @@ fun defaultPopEnterTransition(): EnterTransition {
 fun defaultPopExitTransition(): ExitTransition {
     return fadeOut(animationSpec = tween(durationMillis = 0)) +
             slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
+}
+
+@Composable
+fun ComposeUrlImage(
+    url: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
+    contentDescription: String? = null,
+    onError: ((Throwable) -> Unit)? = null, // Callback for errors
+    errorPlaceholder: @Composable (() -> Unit)? = null
+) {
+    SubcomposeAsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .listener(
+                onError = { _, result ->
+                    onError?.invoke(result.throwable) // Call the error callback with the exception
+                }
+            )
+            .build(),
+        contentScale = contentScale,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        loading = {
+            // Show a loader (e.g., CircularProgressIndicator)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        },
+        error = {
+            // Show the error placeholder
+            if (errorPlaceholder != null) {
+                errorPlaceholder()
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.mbimageloader_no_image_new),
+                    contentDescription = "Error Image",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomModalBottomSheet(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
+    sheetGesturesEnabled:Boolean = false,
+    content: @Composable (ColumnScope.() -> Unit)
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismissRequest,
+        dragHandle = if (sheetGesturesEnabled) dragHandle else null,
+        sheetGesturesEnabled = sheetGesturesEnabled,
+        containerColor = ComposeColor.Transparent
+    ) {
+        Column(modifier.heightIn(max = screenHeight * 0.9f)) {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                Image(
+                    painter = painterResource(id = R.drawable.need_assistance_small_cross_icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(32.dp)
+                        .noRippleClick(onClick = onDismissRequest)
+                        .align(
+                            Alignment.CenterEnd
+                        )
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+            content()
+        }
+    }
 }

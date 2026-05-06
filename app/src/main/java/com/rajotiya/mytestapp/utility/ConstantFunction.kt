@@ -7,9 +7,23 @@ import android.text.TextUtils
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
@@ -69,7 +83,13 @@ fun getFontFamily(font: String): FontFamily {
     return FontFamily(Font(googleFont = fontName, fontProvider = provider, weight))
 }
 
-val provider = GoogleFont.Provider(
+
+fun getFontFamily(font: String = "Montserrat", weight: FontWeight = FontWeight.Normal, fontStyle: FontStyle = FontStyle.Normal): FontFamily {
+    val fontName = GoogleFont(font)
+    return FontFamily(Font(googleFont = fontName, fontProvider = provider, weight = weight, style = fontStyle))
+}
+
+private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
@@ -108,4 +128,42 @@ fun showErrorMessageToast(context: Context, message: String?) {
     } catch (npe: NullPointerException) {
         npe.printStackTrace()
     }
+}
+
+
+@Composable
+fun Modifier.circulatingGradient(): Modifier {
+    val infiniteTransition = rememberInfiniteTransition(label = "micRotation")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotationAnim"
+    )
+
+    // Fixed gradient colors
+    val brush = Brush.sweepGradient(
+        listOf(
+            ComposeColor(0xFFD8232A), // red
+            ComposeColor.White,
+            ComposeColor.White,
+            ComposeColor(0xFF9020CC), // purple
+            ComposeColor(0xFFD8232A)
+        )
+    )
+    return this.then(
+        Modifier.drawWithContent {
+            rotate(angle) {
+                drawCircle(
+                    brush = brush,
+                    radius = size.width,
+                    blendMode = BlendMode.SrcIn,
+                )
+            }
+            drawContent()
+        }
+    )
 }

@@ -3,6 +3,9 @@ package com.rajotiya.mytestapp.aob_revamp.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val mbRed = Color(0xFFD8232A)
+val brickRed = Color(0xffb51f23)
+val mbGreen = Color(0xFF009681)
+val mbGold = Color(0xFFFFC72C)
 
 val aobIconBg = Color(0x80ffeeee)
 
