@@ -1,10 +1,12 @@
 package com.rajotiya.mytestapp.utility
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.animation.core.LinearEasing
@@ -34,7 +36,7 @@ import com.rajotiya.mytestapp.AppContext
 import com.rajotiya.mytestapp.R
 import com.rajotiya.mytestapp.aob_revamp.models.CountryListModel
 import com.rajotiya.mytestapp.aob_revamp.utils.loadJSONFromAsset
-import kotlin.jvm.java
+import java.util.regex.Pattern
 import androidx.compose.ui.graphics.Color as ComposeColor
 
 /**
@@ -74,20 +76,26 @@ fun getFont(font: String): Typeface {
 }
 
 fun getFontFamily(font: String): FontFamily {
-    val weight = when(font){
+    val weight = when (font) {
         Constants.MONTSERRAT -> FontWeight.Normal
         Constants.MONTSERRAT_REGULAR -> FontWeight.Normal
         Constants.MONTSERRAT_MEDIUM -> FontWeight.Medium
         Constants.MONTSERRAT_SEMIBOLD -> FontWeight.SemiBold
         Constants.MONTSERRAT_BOLD -> FontWeight.Bold
-        else -> {FontWeight.Normal}
+        else -> {
+            FontWeight.Normal
+        }
     }
     val fontName = GoogleFont("Montserrat")
     return FontFamily(Font(googleFont = fontName, fontProvider = provider, weight))
 }
 
 
-fun getFontFamily(font: String = "Montserrat", weight: FontWeight = FontWeight.Normal, fontStyle: FontStyle = FontStyle.Normal): FontFamily {
+fun getFontFamily(
+    font: String = "Montserrat",
+    weight: FontWeight = FontWeight.Normal,
+    fontStyle: FontStyle = FontStyle.Normal
+): FontFamily {
     val fontName = GoogleFont(font)
     return FontFamily(Font(googleFont = fontName, fontProvider = provider, weight = weight, style = fontStyle))
 }
@@ -135,7 +143,7 @@ fun showErrorMessageToast(context: Context, message: String?) {
 
 fun checkValueOfIsdCode(isdCode: Int): String {
     var code = "+91"
-    val isdCodeList: CountryListModel = loadJSONFromAsset( "ISDCodes.json", CountryListModel::class.java) as CountryListModel
+    val isdCodeList: CountryListModel = loadJSONFromAsset("ISDCodes.json", CountryListModel::class.java) as CountryListModel
     val itemList: ArrayList<CountryListModel.Country> = isdCodeList.countryCodes as ArrayList<CountryListModel.Country>
     for (item in itemList) {
         if (item.code == isdCode.toString()) {
@@ -181,4 +189,126 @@ fun Modifier.circulatingGradient(): Modifier {
             drawContent()
         }
     )
+}
+
+fun isMobileNumberValid(number: String?, isIndia: Boolean): Boolean {
+    if (number == null || (number.trim { it <= ' ' }.isEmpty())) return false
+    var isValid = false
+    val expression = "^[0-9]{1,15}$"
+    val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
+    val matcher = pattern.matcher(number)
+
+    if (matcher.matches()) {
+        if (isIndia && number.length == 10) {
+            if (number.startsWith("6") ||
+                number.startsWith("7") ||
+                number.startsWith("8") ||
+                number.startsWith("9")
+            ) {
+                isValid = true
+            }
+        }
+
+        if (!isIndia && number.length >= 8 && number.length <= 13) {
+            isValid = true
+        }
+    }
+    return isValid
+}
+
+fun isEmailValid(email: String): Boolean {
+    if (email.isEmpty()) return false
+
+    val expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
+    val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
+    val matcher = pattern.matcher(email)
+    return matcher.matches()
+}
+
+fun checkInValidDomainEmail(email: String): Boolean {
+    val emailDomains = arrayOf<String?>( /*"mailinator.com", */"pokemail.com",
+        "sharklasers.com",
+        "email.com",
+        "yopmail.com",
+        "xyz.com",
+        "123gmail.com",
+        "protonmail.com",
+        "guerillamail.com"
+    )
+    var isValid = false
+    for (i in emailDomains.indices) {
+        if (email.contains(emailDomains[i]!!)) {
+            isValid = false
+            break
+        } else isValid = true
+    }
+    return isValid
+}
+
+fun checkGmailSpelling(email: String?): Boolean {
+//        checkGmailDomainSpelling(email);
+    return true
+}
+
+fun checkGmailDomainSpelling(email: String?) {
+    if (TextUtils.isEmpty(email) || email!!.lowercase().endsWith("gmail.com")) return
+    val emailDomains = arrayOf<String?>(
+        "gmail.con",
+        "gamil.com",
+        "gmai.com",
+        "gmail.co",
+        "gmil.com",
+        "gmail.con",
+        "mail.com",
+        "gamil.com",
+        "gmai.com",
+        "gmal.com",
+        "gnail.com",
+        "gmsil.com",
+        "gmil.com",
+        "gmail.cim",
+        "gmail.co",
+        "gmial.com",
+        "yahoo.co",
+        "mail.com",
+        "hmail.com",
+        "gmail.vom",
+        "gimal.com",
+        "gmqil.com",
+        "gail.com",
+        "gamail.com",
+        "yahoo.con",
+        "gmaol.com",
+        "gnail.com",
+        "gmaill.com",
+        "gmail.cm",
+        "gmail.om"
+    )
+    var isValid = true
+    val emailArray = email.split("@".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    if (emailArray.size > 1) {
+        val emailDomain = emailArray[1]
+        for (domain in emailDomains) {
+            if (emailDomain.equals(domain, ignoreCase = true)) {
+                isValid = false
+                break
+            }
+        }
+    }
+    if (!isValid) {
+        try {
+//            val toast: Toast = Toast.makeText(
+//                MagicBricksApplication.getContext(),
+//                MagicBricksApplication.getContext().getString(R.string.valid_email_domain),
+//                Toast.LENGTH_LONG
+//            )
+//            toast.setGravity(Gravity.CENTER, 0, 0)
+//            toast.getView()!!.setElevation(20f)
+//            toast.getView()!!.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK))
+//            (toast.getView()!!.findViewById<View?>(android.R.id.message) as TextView).setTextColor(Color.WHITE)
+//            toast.show()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
 }
