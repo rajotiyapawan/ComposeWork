@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,6 +54,7 @@ import com.rajotiya.mytestapp.aob_revamp.utils.CustomMobileInputField
 import com.rajotiya.mytestapp.aob_revamp.utils.CustomTextField
 import com.rajotiya.mytestapp.aob_revamp.utils.PIN_VIEW_TYPE_BORDER
 import com.rajotiya.mytestapp.aob_revamp.utils.PinView
+import com.rajotiya.mytestapp.req_capture.ui.theme.RequirementCaptureTheme
 import com.rajotiya.mytestapp.utility.Constants
 import com.rajotiya.mytestapp.utility.checkValueOfIsdCode
 import com.rajotiya.mytestapp.utility.getFont
@@ -67,68 +69,70 @@ import java.util.Locale
 fun RequirementCaptureFlowRoot(
     modifier: Modifier = Modifier, viewModel: RequirementCaptureFlowVM
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val localFocusManager = LocalFocusManager.current
-    val context = LocalContext.current
+    RequirementCaptureTheme(darkTheme = false) {
+        val state by viewModel.uiState.collectAsState()
+        val localFocusManager = LocalFocusManager.current
+        val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                RequirementCaptureFlowEffect.CloseDialog -> {}
-                is RequirementCaptureFlowEffect.ShowToast -> {
-                    Log.d("Toast", "Name: ${state.name} | Email: ${state.email} | Mobile: ${state.isd} ${state.mobile}")
-                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+        LaunchedEffect(Unit) {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    RequirementCaptureFlowEffect.CloseDialog -> {}
+                    is RequirementCaptureFlowEffect.ShowToast -> {
+                        Log.d("Toast", "Name: ${state.name} | Email: ${state.email} | Mobile: ${state.isd} ${state.mobile}")
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
-    }
-
-    Column(
-        modifier
-            .fillMaxHeight()
-            .background(Color.White)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() }, indication = null
-            ) {
-                localFocusManager.clearFocus()
-            }) {
-        TopView(Modifier.fillMaxWidth())
 
         Column(
-            Modifier
-                .fillMaxWidth()
-                .offset(y = (-20).dp)
-                .zIndex(8F)
-                .background(
-                    color = Color.White, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
-                )
-                .padding(start = 20.dp, end = 20.dp, top = 36.dp)
-        ) {
+            modifier
+                .fillMaxHeight()
+                .background(Color.White)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() }, indication = null
+                ) {
+                    localFocusManager.clearFocus()
+                }) {
+            TopView(Modifier.fillMaxWidth())
 
-            when (state.screen) {
-                RequirementCaptureFlowScreen.FORM -> FormScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
-                RequirementCaptureFlowScreen.OTP -> OtpScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
-            }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp))
-                .background(
-                    color = Color.White, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            val ctaText = if (state.screen == RequirementCaptureFlowScreen.FORM) "Next" else "Verify"
-            BottomRedButton(enable = true, ctaText = ctaText, onClick = {
-                if (state.screen == RequirementCaptureFlowScreen.FORM) {
-                    viewModel.processIntent(RequirementCaptureFlowIntent.SubmitForm)
-                } else {
-                    viewModel.processIntent(RequirementCaptureFlowIntent.VerifyOtp)
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-20).dp)
+                    .zIndex(8F)
+                    .background(
+                        color = Color.White, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
+                    )
+                    .padding(start = 20.dp, end = 20.dp, top = 36.dp)
+            ) {
+
+                when (state.screen) {
+                    RequirementCaptureFlowScreen.FORM -> FormScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
+                    RequirementCaptureFlowScreen.OTP -> OtpScreen(Modifier.fillMaxWidth(), state, viewModel::processIntent)
                 }
-            })
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp))
+                    .background(
+                        color = Color.White, shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                val ctaText = if (state.screen == RequirementCaptureFlowScreen.FORM) "Next" else "Verify"
+                BottomRedButton(enable = true, ctaText = ctaText, onClick = {
+                    if (state.screen == RequirementCaptureFlowScreen.FORM) {
+                        viewModel.processIntent(RequirementCaptureFlowIntent.SubmitForm)
+                    } else {
+                        viewModel.processIntent(RequirementCaptureFlowIntent.VerifyOtp)
+                    }
+                })
+            }
         }
     }
 }
@@ -140,7 +144,7 @@ private fun TopView(modifier: Modifier = Modifier) {
             .background(color = mbRed)
             .padding(start = 20.dp, end = 16.dp, top = 12.dp, bottom = 44.dp)
     ) {
-        Text("Let’s save your requirements", color = Color.White)
+        Text("Let’s save your requirements", color = Color.White, style = MaterialTheme.typography.titleMedium)
     }
 }
 
