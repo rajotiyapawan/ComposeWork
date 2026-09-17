@@ -5,4 +5,10 @@
     <string name="you_re_now_an_mb_prime_member">You\'re now a MB Prime Member</string>
     <string name="owner_contact_balance">"Owner Contacts Balance: "</string>
     <string name="relationship_nmanager">Relationship Manager</string>
+
+    <string name="retarget_mb_prime">MB <font color="#fa8000">Prime</font></string>
+    <string name="continue_with_free_plan">Continue with free plan</string>
+    <string name="prime_grid_transparency_promise">100% Transparency Promise</string>
+    <string name="prime_grid_know_more">Know More</string>
+    <string name="continue_with_limited_free_benefits">Continue with Limited Benefits</string>
 </resources>
