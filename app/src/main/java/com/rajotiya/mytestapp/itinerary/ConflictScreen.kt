@@ -338,7 +338,7 @@ fun ConflictPlannedProjectItem(modifier: Modifier = Modifier, defaultProject: Bo
                 .border(width = 1.dp, color = if (defaultProject) Color(0xfff5f5f5) else Color(0xffe8e8e8), shape = RoundedCornerShape(12.dp))
                 .background(color = if (defaultProject) Color(0xfff5f5f5) else Color.White, shape = RoundedCornerShape(12.dp))
                 .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
