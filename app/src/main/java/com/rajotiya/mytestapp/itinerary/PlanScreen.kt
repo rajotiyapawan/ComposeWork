@@ -223,7 +223,7 @@ fun SelectedProjectsRouteMap(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun TimeDistanceBetweenView(modifier: Modifier = Modifier) {
+fun TimeDistanceBetweenView(modifier: Modifier = Modifier) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Default.ArrowDownward, contentDescription = null, modifier = Modifier.size(12.dp))
         Spacer(Modifier.width(7.dp))
