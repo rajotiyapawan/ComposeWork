@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -413,3 +414,50 @@ fun CustomModalBottomSheet(
         }
     }
 }
+
+enum class DottedLineOrientation {
+    Horizontal,
+    Vertical
+}
+fun Modifier.dottedLine(
+    color: ComposeColor,
+    orientation: DottedLineOrientation = DottedLineOrientation.Horizontal,
+    strokeWidth: Dp = 1.dp,
+    dashLength: Dp = 6.dp,
+    gapLength: Dp = 4.dp
+): Modifier = this.then(
+    Modifier.drawBehind {
+
+        val strokePx = strokeWidth.toPx()
+        val dashPx = dashLength.toPx()
+        val gapPx = gapLength.toPx()
+
+        val pathEffect = PathEffect.dashPathEffect(
+            floatArrayOf(dashPx, gapPx),
+            0f
+        )
+
+        when (orientation) {
+
+            DottedLineOrientation.Horizontal -> {
+                drawLine(
+                    color = color,
+                    start = Offset(0f, size.height / 2),
+                    end = Offset(size.width, size.height / 2),
+                    strokeWidth = strokePx,
+                    pathEffect = pathEffect
+                )
+            }
+
+            DottedLineOrientation.Vertical -> {
+                drawLine(
+                    color = color,
+                    start = Offset(size.width / 2, 0f),
+                    end = Offset(size.width / 2, size.height),
+                    strokeWidth = strokePx,
+                    pathEffect = pathEffect
+                )
+            }
+        }
+    }
+)
